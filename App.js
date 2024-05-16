@@ -1,11 +1,13 @@
 import { StyleSheet, Text, View, Dimensions, StatusBar } from 'react-native';
 import Map from './component/Map';
 import Navbar from './component/navbar';
+import Topbar from './component/topbar';
 
 export default function App() {
   return (
     <View style={styles.container}>
       <Map/>
+      <Topbar/>
       <Navbar/>
     </View>
   );
