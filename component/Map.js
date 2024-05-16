@@ -24,7 +24,7 @@ const Map = () => {
 
       let location = await Location.getCurrentPositionAsync({});
       const { latitude, longitude } = location.coords;
-      console.log('User location:', { latitude, longitude }); // Log user's location
+      // console.log('User location:', { latitude, longitude }); // Log user's location
       setInitialRegion({
         latitude,
         longitude,
@@ -60,10 +60,7 @@ const Map = () => {
 
   return (
     <View style={styles.container}>
-      <MapView
-        style={styles.map}
-        initialRegion={initialRegion}
-      >
+      <MapView style={styles.map} initialRegion={initialRegion}>
         {initialRegion && (
           <Marker
             coordinate={initialRegion}
@@ -80,9 +77,9 @@ const Map = () => {
           />
         )}
       </MapView>
-      <View style={styles.buttonContainer}>
+      {/* <View style={styles.buttonContainer}>
         <Button title="Find Nearest Bike Station" onPress={findNearestBikeStation} />
-      </View>
+      </View> */}
     </View>
   );
 };
@@ -92,7 +89,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   map: {
-    flex: 1,
+    width: '100%',
+    height: '100%',
   },
   buttonContainer: {
     position: 'absolute',
