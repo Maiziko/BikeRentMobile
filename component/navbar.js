@@ -3,20 +3,21 @@ import { Image } from 'expo-image'
 import { Link } from 'expo-router';
 
 const Navbar = () => {
-  var route = route;
+    var route = route;
 
   return (
+    // Ada penambanhan margin Top dan margin Vertical biar lebih tengah, ada perubahan ukuran yang awalnya 27 x 27 (dirasa terlalu besar) ke 20x20
     <View style={styles.container}>
         <View style={styles.left}>
-            <Link href='/'>
+            <Link href='/' style={{ marginTop: 'auto' }}>
                 <View style={{flex:1, position:'absolute', alignItems:'center', justifyContent:'center'}}>
-                    <Image source={require('../assets/nav/home-inact.svg')} contentFit='fill' style={{width:27, height:27}}/>
+                    <Image source={require('../assets/nav/home-inact.svg')} contentFit='fill' style={{width:20, height:20}}/>
                     <Text style={{color:'#5E5F60', fontWeight:'semibold'}}>Home</Text>
                 </View>
             </Link>
-            <Link href='/'>
+            <Link href='/' style={{ marginTop: 'auto' }}>
             <View style={{flex:1, position:'absolute', alignItems:'center', justifyContent:'center'}}>
-                    <Image source={require('../assets/nav/post-inact.svg')} contentFit='fill' style={{width:27, height:27}}/>
+                    <Image source={require('../assets/nav/post-inact.svg')} contentFit='fill' style={{width:20, height:20}}/>
                     <Text style={{color:'#5E5F60', fontWeight:'semibold'}}>Post</Text>
                 </View>
             </Link>
@@ -25,15 +26,15 @@ const Navbar = () => {
             <Image source={require('../assets/nav/scanqr.svg')} contentFit='fill' style={{width:75, height:75}}/>
         </View>
         <View style={styles.right}>
-            <Link href='/'>
+            <Link href='/' style={{ marginVertical: 'auto' }}>
                 <View style={{flex:1, position:'absolute', alignItems:'center', justifyContent:'center'}}>
-                    <Image source={require('../assets/nav/history-inact.svg')} contentFit='fill' style={{width:27, height:27}}/>
+                    <Image source={require('../assets/nav/history-inact.svg')} contentFit='fill' style={{width:20, height:20}}/>
                     <Text style={{color:'#5E5F60', fontWeight:'semibold'}}>History</Text>
                 </View>
             </Link>
-            <Link href='/'>
+            <Link href='/' style={{ marginTop: 'auto' }}>
                 <View style={{flex:1, position:'absolute', alignItems:'center', justifyContent:'center'}}>
-                    <Image source={require('../assets/nav/profile-inact.svg')} contentFit='fill' style={{width:27, height:27}}/>
+                    <Image source={require('../assets/nav/profile-inact.svg')} contentFit='fill' style={{width:20, height:20}}/>
                     <Text style={{color:'#5E5F60', fontWeight:'semibold'}}>Profile</Text>
                 </View>
             </Link>
@@ -48,7 +49,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#ffffff',
         alignItems: 'center',
         justifyContent: 'center',
-        position: 'absolute',
+        position: 'relative', // Kalau absolute posisinya kalau di HP yang layarnya punya sudut melengkung jadi ngambang, make relative jadi pas
         width: '100%',
         height: 70,
         bottom: 10,
@@ -61,20 +62,20 @@ const styles = StyleSheet.create({
         position: 'absolute',
         flexDirection: 'row',
         justifyContent: 'space-between',
-        width: '40%',
+        width: '45%', // Sebelumnya ukurannya 40%
         paddingHorizontal: 25,
         bottom: 15,
         left: 5,
     },
     center: {
-        position: 'absolute',
+        position: 'relative',
         bottom: 21,
     },
     right: {
         position: 'absolute',
         flexDirection: 'row',
         justifyContent: 'space-between',
-        width: '40%',
+        width: '45%',// Sebelumnya ukurannya 40%
         paddingHorizontal: 25,
         bottom: 15,
         right: 5,
