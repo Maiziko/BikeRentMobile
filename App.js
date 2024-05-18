@@ -8,7 +8,7 @@ export default function App() {
   return (
     <View style={styles.container}>
       <Map/>
-      {/*<Topbar/>*/}
+      <Topbar/>
       <Topbar_2 tittle = "My Car"/>
       <Navbar/>
     </View>

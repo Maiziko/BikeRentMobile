@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#ffffff',
         alignItems: 'center',
         justifyContent: 'center',
-        position: 'relative', // Kalau absolute posisinya kalau di HP yang layarnya punya sudut melengkung jadi ngambang, make relative jadi pas
+        position: 'absolute', // Kalau absolute posisinya kalau di HP yang layarnya punya sudut melengkung jadi ngambang, make relative jadi pas
         width: '100%',
         height: 70,
         bottom: 10,
