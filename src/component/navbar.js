@@ -11,30 +11,30 @@ const Navbar = () => {
         <View style={styles.left}>
             <Link href='/' style={{ marginTop: 'auto' }}>
                 <View style={{flex:1, position:'absolute', alignItems:'center', justifyContent:'center'}}>
-                    <Image source={require('../assets/nav/home-inact.svg')} contentFit='fill' style={{width:20, height:20}}/>
+                    <Image source={require('../../assets/nav/home-inact.svg')} contentFit='fill' style={{width:20, height:20}}/>
                     <Text style={{color:'#5E5F60', fontWeight:'semibold'}}>Home</Text>
                 </View>
             </Link>
             <Link href='/' style={{ marginTop: 'auto' }}>
             <View style={{flex:1, position:'absolute', alignItems:'center', justifyContent:'center'}}>
-                    <Image source={require('../assets/nav/post-inact.svg')} contentFit='fill' style={{width:20, height:20}}/>
+                    <Image source={require('../../assets/nav/post-inact.svg')} contentFit='fill' style={{width:20, height:20}}/>
                     <Text style={{color:'#5E5F60', fontWeight:'semibold'}}>Post</Text>
                 </View>
             </Link>
         </View>
         <View style={styles.center}>
-            <Image source={require('../assets/nav/scanqr.svg')} contentFit='fill' style={{width:75, height:75}}/>
+            <Image source={require('../../assets/nav/scanqr.svg')} contentFit='fill' style={{width:75, height:75}}/>
         </View>
         <View style={styles.right}>
             <Link href='/' style={{ marginVertical: 'auto' }}>
                 <View style={{flex:1, position:'absolute', alignItems:'center', justifyContent:'center'}}>
-                    <Image source={require('../assets/nav/history-inact.svg')} contentFit='fill' style={{width:20, height:20}}/>
+                    <Image source={require('../../assets/nav/history-inact.svg')} contentFit='fill' style={{width:20, height:20}}/>
                     <Text style={{color:'#5E5F60', fontWeight:'semibold'}}>History</Text>
                 </View>
             </Link>
             <Link href='/' style={{ marginTop: 'auto' }}>
                 <View style={{flex:1, position:'absolute', alignItems:'center', justifyContent:'center'}}>
-                    <Image source={require('../assets/nav/profile-inact.svg')} contentFit='fill' style={{width:20, height:20}}/>
+                    <Image source={require('../../assets/nav/profile-inact.svg')} contentFit='fill' style={{width:20, height:20}}/>
                     <Text style={{color:'#5E5F60', fontWeight:'semibold'}}>Profile</Text>
                 </View>
             </Link>

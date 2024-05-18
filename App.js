@@ -1,26 +1,10 @@
-import { StyleSheet, Text, View, Dimensions, StatusBar } from 'react-native';
-import Map from './component/Map';
-import Navbar from './component/navbar';
-import Topbar from './component/topbar';
-import Topbar_2 from './component/topbar_2';
+import Routes from './src/routes';
+import React from 'react';
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Map/>
-      <Topbar/>
-      <Topbar_2 tittle = "My Car"/>
-      <Navbar/>
-    </View>
+    <React.Fragment>
+      <Routes />
+    </React.Fragment>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    width: Dimensions.get('window').width,
-    height: Dimensions.get('window').height,
-    marginTop: StatusBar.currentHeight,
-  },
-});
-
-

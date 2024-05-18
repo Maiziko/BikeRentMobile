@@ -1,7 +1,7 @@
 import { Pressable, StyleSheet, Text, View, TextInput } from 'react-native';
 import { Image } from 'expo-image'
 import { Link } from 'expo-router';
-import Button from './Button';
+import Button from '../../component/Button';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useFonts } from 'expo-font';
 import { Outfit_400Regular, Outfit_700Bold } from '@expo-google-fonts/outfit';
@@ -15,7 +15,7 @@ const Signup = () => {
     return (
         <View style={style.container}>
             <View style={style.banner}>
-                <Image source={require('../assets/BikeRentbanner.svg')} contentFit='fill' style={{width:287, height:107}}/>
+                <Image source={require('../../../assets/BikeRentbanner.svg')} contentFit='fill' style={{width:287, height:107}}/>
             </View>
             <View style={style.form}>
                 {/* Button Sign In or Sign Up */}

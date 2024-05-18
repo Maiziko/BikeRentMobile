@@ -1,9 +1,9 @@
-import Topbar_2 from "./topbar_2";
-import Navbar from "./navbar";
+import Topbar_2 from "../../component/topbar_2";
+import Navbar from "../../component/navbar";
 import { Pressable, StyleSheet, Text, View, TextInput,TouchableOpacity } from 'react-native';
 import { Image } from 'expo-image'
 import { Link } from 'expo-router';
-import Button from './Button';
+import Button from '../../component/Button';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useFonts } from 'expo-font';
 
@@ -14,7 +14,7 @@ const Profile = () => {
             <Topbar_2 tittle={'PROFILE'}/>
             {/* Bagian Profile */}
                 <View style={{flexDirection: 'column', alignItems: 'center', marginTop:'30%'}}>
-                    <Image source={require('../assets/functional/dummy-profile.jpeg')} contentFit='fill' 
+                    <Image source={require('../../../assets/functional/dummy-profile.jpeg')} contentFit='fill' 
                         // source={{ uri: dataUsers.imageUri ? dataUsers.imageUri : `https://ui-avatars.com/api/?name=${dataUsers.fullname}` }}
                         style={styles.profpic}
                     />
@@ -36,35 +36,35 @@ const Profile = () => {
                 </View>
                 <View style={{ marginHorizontal: 'auto', marginTop: 40 }}>
                     <View style={styles.tags}>
-                            <Image source={require('../assets/Profile.svg')}
+                            <Image source={require('../../../assets/Profile.svg')}
                                 // source={{ uri: dataUsers.imageUri ? dataUsers.imageUri : `https://ui-avatars.com/api/?name=${dataUsers.fullname}` }}
                                 style={{ width: 39, height: 39, borderRadius: 50 }}
                             />
                             <Text style={{ paddingLeft: 20, fontSize: 15, fontWeight: 'bold', color: '#004268', }}>Andi Kriwil</Text>
                     </View>
                     <View style={styles.tags}>
-                            <Image source={require('../assets/Email.svg')}
+                            <Image source={require('../../../assets/Email.svg')}
                                 // source={{ uri: dataUsers.imageUri ? dataUsers.imageUri : `https://ui-avatars.com/api/?name=${dataUsers.fullname}` }}
                                 style={{ width: 39, height: 39, borderRadius: 50 }}
                             />
                             <Text style={{ paddingLeft: 20, fontSize: 15, fontWeight: 'bold', color: '#004268' }}>Gmail</Text>
                     </View>
                     <View style={styles.tags}>
-                            <Image source={require('../assets/Phone.svg')}
+                            <Image source={require('../../../assets/Phone.svg')}
                                 // source={{ uri: dataUsers.imageUri ? dataUsers.imageUri : `https://ui-avatars.com/api/?name=${dataUsers.fullname}` }}
                                 style={{ width: 39, height: 39, borderRadius: 50 }}
                             />
                             <Text style={{ paddingLeft: 20, fontSize: 15, fontWeight: 'bold', color: '#004268' }}>Nomor Ponsel</Text>
                     </View>
                     <View style={styles.tags}>
-                            <Image source={require('../assets/Card.svg')}
+                            <Image source={require('../../../assets/Card.svg')}
                                 // source={{ uri: dataUsers.imageUri ? dataUsers.imageUri : `https://ui-avatars.com/api/?name=${dataUsers.fullname}` }}
                                 style={{ width: 39, height: 39, borderRadius: 50 }}
                             />
                             <Text style={{ paddingLeft: 20, fontSize: 15, fontWeight: 'bold', color: '#004268' }}>My Card</Text>
                     </View>
                     <TouchableOpacity style={styles.tags}>
-                            <Image source={require('../assets/Logout.svg')}
+                            <Image source={require('../../../assets/Logout.svg')}
                                 // source={{ uri: dataUsers.imageUri ? dataUsers.imageUri : `https://ui-avatars.com/api/?name=${dataUsers.fullname}` }}
                                 style={{ width: 39, height: 39, borderRadius: 50 }}
                             />

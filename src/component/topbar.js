@@ -2,24 +2,30 @@ import { StyleSheet, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Image } from 'expo-image'
 import { Link } from 'expo-router';
-import { useFonts } from 'expo-font';
 
-const Topbar_2 = ({tittle}) => {
-    var judul = tittle;
+const Topbar = () => {
+    var username = 'Udin';
+
     return (    
         <View style={styles.container}>
             <LinearGradient colors={['#EB7802', '#DA421C']} style={styles.container}/>
             <View style={styles.left}>
                 <Link href='/'>
                     <View>
-                        <Image source={require('../assets/nav/back.svg')} contentFit='fill' style={{width:55, height:55, borderRadius:30}}/>
+                        <Image source={require('../../assets/functional/dummy-profile.jpeg')} contentFit='fill' style={{width:55, height:55, borderRadius:30}}/>
                     </View>
                 </Link>
-            </View>
-            <View style={styles.center}>
                 <View style={{paddingLeft:10}}>
-                    <Text style={{color:'#FFFFFF', fontWeight:'bold', fontSize:21, textShadowColor: '#000', textShadowOffset: { width: 2, height: 2 }, textShadowRadius: 3,}}>{judul}</Text>
+                    <Text style={{color:'#FFFFFF', fontWeight:'bold', fontSize:21}}>Hello, {username}</Text>
+                    <Text style={{color:'#FFFFFF', fontWeight:'semibold', fontSize:15}}>99 Tahun</Text>
                 </View>
+            </View>
+            <View style={styles.right}>
+                <Link href='/'>
+                    <View style={{flex:1, position:'absolute', alignItems:'center', justifyContent:'center'}}>
+                        <Image source={require('../../assets/functional/notification.svg')} contentFit='fill' style={{width:39, height:39}}/>
+                    </View>
+                </Link>
             </View>
         </View>
     )
@@ -48,9 +54,6 @@ const styles = StyleSheet.create({
         top: 30,
         right:25,
     },
-    center: {
-        position: 'absolute',
-    },
 });
 
-export default Topbar_2;
+export default Topbar;
