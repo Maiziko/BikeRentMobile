@@ -3,8 +3,8 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import Signup from '../screens/Signup';
 import React from 'react';
-import Home from '../screens/users/Home';
-import BarcodeScanner from '../screens/users/BarcodeScanner';
+import Home from '../screens/Home';
+import BarcodeScanner from '../screens/BarcodeScanner';
 
 const Stack = createStackNavigator()
 
@@ -15,8 +15,8 @@ const Routes = () => {
       <NavigationContainer>
         <Stack.Navigator>
             {/* <Stack.Screen name= 'Signup' component ={Signup} options={{ headerShown: false }}/> */}
-            {/* <Stack.Screen name= 'Home' component ={Home} options={{ headerShown: false }}/> */}
-            <Stack.Screen name="BarcodeScanner" component={BarcodeScanner} options={{ headerShown: false }}/>
+            <Stack.Screen name= 'Home' component ={Home} options={{ headerShown: false }}/>
+            {/* <Stack.Screen name="BarcodeScanner" component={BarcodeScanner} options={{ headerShown: false }}/> */}
         </Stack.Navigator>
       </NavigationContainer>
     </View>
