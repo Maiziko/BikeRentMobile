@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View, Dimensions, StatusBar } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import Signup from '../screens/auth/Signup';
+import Signup from '../screens/Signup';
 import React from 'react';
 import Home from '../screens/users/Home';
 import BarcodeScanner from '../screens/users/BarcodeScanner';

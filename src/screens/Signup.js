@@ -2,14 +2,14 @@ import { Pressable, StyleSheet, Text, View, TextInput } from 'react-native';
 import { Image } from 'expo-image'
 import { Link } from 'expo-router';
 import React, { useState } from 'react'
-import Button from '../../component/Button';
+import Button from '../component/Button';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useFonts } from 'expo-font';
 import { Outfit_400Regular, Outfit_700Bold } from '@expo-google-fonts/outfit';
 import { doc, setDoc } from 'firebase/firestore';
 import { useNavigation } from '@react-navigation/native'
 import { Toast } from 'react-native-toast-notifications';
-import { firebaseAuth, firestore } from '../../config/firebase'
+import { firebaseAuth, firestore } from '../config/firebase'
 import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
 
 const Signup = () => {
@@ -111,7 +111,7 @@ const Signup = () => {
     return (
         <View style={style.container}>
             <View style={style.banner}>
-                <Image source={require('../../../assets/BikeRentbanner.svg')} contentFit='fill' style={{width:287, height:107}}/>
+                <Image source={require('../../assets/BikeRentbanner.svg')} contentFit='fill' style={{width:287, height:107}}/>
             </View>
             <View style={style.form}>
                 {/* Button Sign In or Sign Up */}
