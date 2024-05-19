@@ -4,6 +4,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import Signup from '../screens/auth/Signup';
 import React from 'react';
 import Home from '../screens/users/Home';
+import BarcodeScanner from '../screens/users/BarcodeScanner';
 
 const Stack = createStackNavigator()
 
@@ -13,8 +14,9 @@ const Routes = () => {
     <View style={styles.container}>
       <NavigationContainer>
         <Stack.Navigator>
-            <Stack.Screen name= 'Signup' component ={Signup} options={{ headerShown: false }}/>
-            <Stack.Screen name= 'Home' component ={Home} options={{ headerShown: false }}/>
+            {/* <Stack.Screen name= 'Signup' component ={Signup} options={{ headerShown: false }}/> */}
+            {/* <Stack.Screen name= 'Home' component ={Home} options={{ headerShown: false }}/> */}
+            <Stack.Screen name="BarcodeScanner" component={BarcodeScanner} options={{ headerShown: false }}/>
         </Stack.Navigator>
       </NavigationContainer>
     </View>
