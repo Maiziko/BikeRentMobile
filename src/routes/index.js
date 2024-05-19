@@ -5,6 +5,7 @@ import Signup from '../screens/Signup';
 import React from 'react';
 import Home from '../screens/Home';
 import BarcodeScanner from '../screens/BarcodeScanner';
+import MyVoucher from '../screens/MyVoucer';
 
 const Stack = createStackNavigator()
 
@@ -15,8 +16,9 @@ const Routes = () => {
       <NavigationContainer>
         <Stack.Navigator>
             {/* <Stack.Screen name= 'Signup' component ={Signup} options={{ headerShown: false }}/> */}
-            <Stack.Screen name= 'Home' component ={Home} options={{ headerShown: false }}/>
+            {/* <Stack.Screen name= 'Home' component ={Home} options={{ headerShown: false }}/> */}
             {/* <Stack.Screen name="BarcodeScanner" component={BarcodeScanner} options={{ headerShown: false }}/> */}
+            <Stack.Screen name= 'MyVoucher' component ={MyVoucher} options={{ headerShown: false }}/>
         </Stack.Navigator>
       </NavigationContainer>
     </View>
