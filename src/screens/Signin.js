@@ -98,10 +98,10 @@ const SignIn = () => {
                         </Pressable>
                     </View>
                 </View>
-                <Text style={{ paddingLeft: 20, marginTop: 26, fontWeight: 'bold' }}>Welcome Back</Text>
+                <Text style={{ paddingLeft: 20, marginTop: 26, fontWeight: 'bold' }}>Sign In With Email</Text>
                 <TextInput
                     style={{ width: 297, height: 51, borderWidth: 1, borderRadius: 8, marginHorizontal: 'auto', marginTop: 16, paddingHorizontal: 20, borderColor: '#C2C2C2' }}
-                    placeholder='Enter Username or Email'
+                    placeholder='Username or Email'
                     label={"EmailOrUsername"}
                     invalid={!inputs.emailOrUsername.isValid}
                     onChangeText={inputChangeHandler.bind(this, 'emailOrUsername')}
