@@ -7,20 +7,18 @@ import { useFonts } from 'expo-font';
 const Topbar_2 = ({tittle}) => {
     var judul = tittle;
     return (    
-        <View style={styles.container}>
-            <LinearGradient colors={['#EB7802', '#DA421C']} style={styles.container}/>
-            <View style={styles.left}>
-                <Link href='/'>
-                    <View>
-                        <Image source={require('../../assets/nav/back.svg')} contentFit='fill' style={{width:55, height:55, borderRadius:30}}/>
-                    </View>
-                </Link>
-            </View>
-            <View style={styles.center}>
-                <View style={{paddingLeft:10}}>
+        <View style={{flexDirection:'row', height:100}}>
+                <LinearGradient colors={['#EB7802', '#DA421C']} style={styles.top}/>
+                <View style={{position:'absolute', top:25, left:25}}>
+                    <Link href='/'>
+                        <View>
+                            <Image source={require('../../assets/nav/back.svg')} contentFit='fill' style={{width:55, height:55, borderRadius:30}}/>
+                        </View>
+                    </Link>
+                </View>
+                <View style={{width:'100%', alignItems:'center', justifyContent:'center'}}>
                     <Text style={{color:'#FFFFFF', fontWeight:'bold', fontSize:21, textShadowColor: '#000', textShadowOffset: { width: 2, height: 2 }, textShadowRadius: 3,}}>{judul}</Text>
                 </View>
-            </View>
         </View>
     )
 }
@@ -50,6 +48,17 @@ const styles = StyleSheet.create({
     },
     center: {
         position: 'absolute',
+    },
+    top: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        position: 'absolute',
+        width: '100%',
+        height: 100,
+        top: 0,
+        borderBottomLeftRadius: 25,
+        borderBottomRightRadius: 25,
     },
 });
 

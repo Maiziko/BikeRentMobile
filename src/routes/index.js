@@ -6,6 +6,8 @@ import React from 'react';
 import Home from '../screens/Home';
 import BarcodeScanner from '../screens/BarcodeScanner';
 import MyVoucher from '../screens/MyVoucer';
+import MyCard from '../screens/MyCard';
+import Profile from '../screens/Profile';
 
 const Stack = createStackNavigator()
 
@@ -18,7 +20,9 @@ const Routes = () => {
             {/* <Stack.Screen name= 'Signup' component ={Signup} options={{ headerShown: false }}/> */}
             {/* <Stack.Screen name= 'Home' component ={Home} options={{ headerShown: false }}/> */}
             {/* <Stack.Screen name="BarcodeScanner" component={BarcodeScanner} options={{ headerShown: false }}/> */}
-            <Stack.Screen name= 'MyVoucher' component ={MyVoucher} options={{ headerShown: false }}/>
+            {/* <Stack.Screen name= 'MyVoucher' component ={MyVoucher} options={{ headerShown: false }}/> */}
+            <Stack.Screen name= 'MyCard' component ={MyCard} options={{ headerShown: false }}/>
+            {/* <Stack.Screen name= 'Profile' component ={Profile} options={{ headerShown: false }}/> */}
         </Stack.Navigator>
       </NavigationContainer>
     </View>
