@@ -5,7 +5,7 @@ import Signup from '../screens/Signup';
 import React from 'react';
 import Home from '../screens/Home';
 import BarcodeScanner from '../screens/BarcodeScanner';
-import MyVoucher from '../screens/MyVoucer';
+import MyVoucher from '../screens/MyVoucher';
 import MyCard from '../screens/MyCard';
 import Profile from '../screens/Profile';
 
