@@ -184,12 +184,19 @@ const MyCard = () => {
                 onChangeText={setNewCardHolder}
                 style={[styles.input, errors.newCardHolder && { borderColor: 'red' }]}
               />
-              <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-                <Text style={styles.saveButtonText}>Save</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.cancelButton} onPress={handleClearInput}>
-                <Text style={styles.cancelButtonText}>Cancel</Text>
-              </TouchableOpacity>
+
+              <View style={[styles.buttonContainer, {}]}>
+                <LinearGradient colors={['#EB7802', '#DA421C']} style={styles.button}>
+                    <TouchableOpacity onPress={handleSave}>
+                      <Text style={styles.buttonText}>Save</Text>
+                    </TouchableOpacity>
+                </LinearGradient>      
+                <TouchableOpacity style={styles.button} onPress={handleClearInput}>
+                  <Text style={styles.buttonText}>Cancel</Text>
+                </TouchableOpacity>
+                          
+              </View>
+
             </View>
           </View>
           </TouchableOpacity>
@@ -222,6 +229,8 @@ const MyCard = () => {
           </View>
           </TouchableOpacity>
         </Modal>
+
+        
       </View>
     </View>
 
@@ -314,27 +323,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     paddingHorizontal: 10,
   },
-  saveButton: {
-    backgroundColor: '#28a745',
-    borderRadius: 5,
-    padding: 10,
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  saveButtonText: {
-    color: 'white',
-    fontWeight: 'bold',
-  },
-  cancelButton: {
-    backgroundColor: '#dc3545',
-    borderRadius: 5,
-    padding: 10,
-    alignItems: 'center',
-  },
-  cancelButtonText: {
-    color: 'white',
-    fontWeight: 'bold',
-  },
+
   modalOverlay: {
     flex: 1,
   backgroundColor: 'rgba(0, 0, 0, 0.5)',
@@ -350,8 +339,9 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     marginTop: 20,
+    width: "100%",
   },
   errorText: {
     color: 'red',
@@ -373,17 +363,14 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     fontSize: 16
   },
-  buttonContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    width: "100%"
-  },
+  
   button: {
     borderRadius: 25,
     padding: 10,
     elevation: 2,
     width: "35%",
     borderWidth: 0.5,
+    marginHorizontal: 20,
   },
   buttonText: {
     fontSize: 18,
