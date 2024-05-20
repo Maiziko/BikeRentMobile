@@ -18,8 +18,8 @@ const Routes = () => {
     <View style={styles.container}>
       <NavigationContainer>
         <Stack.Navigator>
-            {/* <Stack.Screen name= 'Signin' component ={Signin} options={{ headerShown: false }}/> */}
              <Stack.Screen name= 'Signin' component ={Signin} options={{ headerShown: false }}/> 
+            {/* <Stack.Screen name= 'Signup' component ={Signup} options={{ headerShown: false }}/> */}
             {/* <Stack.Screen name= 'Home' component ={Home} options={{ headerShown: false }}/> */}
             {/* <Stack.Screen name="BarcodeScanner" component={BarcodeScanner} options={{ headerShown: false }}/> */}
             {/* <Stack.Screen name= 'MyVoucher' component ={MyVoucher} options={{ headerShown: false }}/> */}
