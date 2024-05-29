@@ -9,6 +9,7 @@ import BarcodeScanner from '../screens/BarcodeScanner';
 import MyVoucher from '../screens/MyVoucher';
 import MyCard from '../screens/MyCard';
 import Profile from '../screens/Profile';
+import UpdateProfile from '../screens/UpdateProfile';
 
 const Stack = createStackNavigator()
 
@@ -25,6 +26,7 @@ const Routes = () => {
             {/* <Stack.Screen name= 'MyVoucher' component ={MyVoucher} options={{ headerShown: false }}/> */}
             {/* <Stack.Screen name= 'MyCard' component ={MyCard} options={{ headerShown: false }}/> */}
             <Stack.Screen name= 'Profile' component ={Profile} options={{ headerShown: false }}/>
+            <Stack.Screen name= 'UpdateProfile' component ={UpdateProfile} options={{ headerShown: false }}/>
         </Stack.Navigator>
       </NavigationContainer>
     </View>

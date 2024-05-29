@@ -11,11 +11,14 @@ import { doc, getDoc } from 'firebase/firestore';
 import { firebaseAuth, firestore } from '../config/firebase'
 import { destroyKey, getKey } from '../config/localStorage'
 import React, { useEffect, useLayoutEffect, useState } from 'react'
+import { useNavigation } from '@react-navigation/native';
 
-const Profile = ({navigation, route}) => {
+
+const Profile = ({route}) => {
     const {userId} = route.params;
     const [dataUsers, setDataUsers] = useState([])
     const [isLoading, setIsLoading] = useState(false);
+    const navigation = useNavigation();
 
     const handleLogout = () => {
         signOut(firebaseAuth).then(() => {
@@ -47,21 +50,20 @@ const Profile = ({navigation, route}) => {
             <Topbar_2 tittle={'PROFILE'}/>
             {/* Bagian Profile */}
                 <View style={{flexDirection: 'column', alignItems: 'center', marginTop:'10%'}}>
-                    <Image source={require('../../assets/functional/dummy-profile.jpeg')} contentFit='fill' 
-                        // source={{ uri: dataUsers.imageUri ? dataUsers.imageUri : `https://ui-avatars.com/api/?name=${dataUsers.fullname}` }}
+                    <Image contentFit='fill' 
+                        source={{ uri: dataUsers.imageUri ? dataUsers.imageUri : `https://ui-avatars.com/api/?name=${dataUsers.fullname}` }}
                         style={styles.profpic}
                     />
                     <View style={{ flexDirection: 'column', marginTop: 16 }}>
                         <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#DB461A' }}>{dataUsers.fullname}</Text>
                     </View>
-                    <TouchableOpacity style={styles.touch}
-                    //                     onPress={() => navigation.navigate('update-profile', {
-                    //                     userId: userId,
-                    //                     fullname: dataUsers.fullname,
-                    //                     imageUri: dataUsers.imageUri,
-                    //                     alamat: dataUsers.alamat,
-                    //                     gender: dataUsers.gender
-                    // })}
+                    <TouchableOpacity style={styles.touch} 
+                                        onPress={() => navigation.navigate('UpdateProfile', {
+                                        userId: userId,
+                                        fullname: dataUsers.fullname,
+                                        imageUri: dataUsers.imageUri,
+                                        nomorTelp: dataUsers.nomorTelp
+                    })}
                     >
                         <LinearGradient colors={['#EB7802', '#DA421C']} style={styles.linear}/>
                         <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#ffffff' }}>Edit Profil</Text>
@@ -88,7 +90,7 @@ const Profile = ({navigation, route}) => {
                                 // source={{ uri: dataUsers.imageUri ? dataUsers.imageUri : `https://ui-avatars.com/api/?name=${dataUsers.fullname}` }}
                                 style={{ width: 39, height: 39, borderRadius: 50 }}
                             />
-                            <Text style={{ paddingLeft: 20, fontSize: 15, fontWeight: 'bold', color: '#004268' }}>Nomor Ponsel</Text>
+                            <Text style={{ paddingLeft: 20, fontSize: 15, fontWeight: 'bold', color: '#004268' }}>{dataUsers.nomorTelp}</Text>
                     </View>
                     <View style={styles.tags}>
                             <Image source={require('../../assets/Card.svg')}

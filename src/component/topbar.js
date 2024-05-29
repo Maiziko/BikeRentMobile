@@ -50,7 +50,7 @@ const Topbar = ({userId}) => {
                 </Link>
                 <View style={{paddingLeft:10}}>
                     <Text style={{color:'#FFFFFF', fontWeight:'bold', fontSize:21}}>Hello, {dataUsers.fullname}</Text>
-                    <Text style={{color:'#FFFFFF', fontWeight:'semibold', fontSize:15}}>99 Tahun</Text>
+                    <Text style={{color:'#FFFFFF', fontWeight:'semibold', fontSize:15}}>{dataUsers.umur}</Text>
                 </View>
             </View>
             <View style={styles.right}>
