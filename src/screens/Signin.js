@@ -1,6 +1,6 @@
-import { Pressable, StyleSheet, Text, View, TextInput } from 'react-native';
+import { Pressable, StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native';
 import { Image } from 'expo-image';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Button from '../component/Button';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useFonts } from 'expo-font';
@@ -9,6 +9,9 @@ import { useNavigation } from '@react-navigation/native';
 import { Toast } from 'react-native-toast-notifications';
 import { firebaseAuth } from '../config/firebase';
 import { signInWithEmailAndPassword } from 'firebase/auth';
+import { Snackbar } from 'react-native-paper'; // Import Snackbar
+import { getKey, storeKey } from '../config/localStorage';
+import { Ionicons } from '@expo/vector-icons';
 
 const SignIn = () => {
     let [fontsLoaded] = useFonts({
@@ -19,53 +22,62 @@ const SignIn = () => {
     const navigation = useNavigation();
     const [isLoading, setIsLoading] = useState(false);
     const [inputs, setInputs] = useState({
-        emailOrUsername: { value: '', isValid: true },
+        email: { value: '', isValid: true },
         password: { value: '', isValid: true },
     });
 
-    const handleSignIn = async () => {
-        const dataSignIn = {
-            emailOrUsername: inputs.emailOrUsername.value,
+    const [snackbarVisible, setSnackbarVisible] = useState(false); // State untuk menampilkan Snackbar
+    const [snackbarMessage, setSnackbarMessage] = useState(''); // Pesan yang akan ditampilkan di Snackbar
+
+    useEffect(() => {
+        getKey('LOGGED_IN').then(res => {
+            const data = res;
+            console.log("data user: ", data);
+            if (data) {
+                navigation.replace('Home', { userId: data });
+            }
+        });
+    }, []);
+
+    const handleLogin = async () => {
+        const dataLogin = {
+            email: inputs.email.value,
             password: inputs.password.value,
         };
 
-        const emailOrUsernameIsValid = dataSignIn.emailOrUsername.trim() !== "";
-        const passwordIsValid = dataSignIn.password.trim() !== "";
+        const emailIsValid = inputs.email.value.trim() !== '';
+        const passwordIsValid = inputs.password.value.trim() !== '';
 
-        if (!emailOrUsernameIsValid || !passwordIsValid) {
+        if (!emailIsValid || !passwordIsValid) {
             setInputs((currentInputs) => ({
-                emailOrUsername: { value: currentInputs.emailOrUsername.value, isValid: emailOrUsernameIsValid },
+                email: { value: currentInputs.email.value, isValid: emailIsValid },
                 password: { value: currentInputs.password.value, isValid: passwordIsValid },
             }));
-
-            Toast.show("Check your input", {
-                duration: 3000,
-                placement: 'bottom',
-                type: 'danger',
-            });
+            setSnackbarMessage('Please, check your input'); // Set pesan untuk Snackbar
+            setSnackbarVisible(true); // Tampilkan Snackbar
             return;
         }
 
         setIsLoading(true);
+
         try {
-            // Assuming emailOrUsername contains email. In real application, you should resolve username to email.
-            const userCredential = await signInWithEmailAndPassword(firebaseAuth, dataSignIn.emailOrUsername, dataSignIn.password);
-            console.log("Sign In Success", userCredential.user);
+            const userCredential = await signInWithEmailAndPassword(firebaseAuth, dataLogin.email, dataLogin.password);
+            const userId = userCredential.user.uid;
+            const emailVerified = userCredential.user.emailVerified;
+            console.log(userId)
 
-            Toast.show("Sign In success", {
-                duration: 3000,
-                placement: 'bottom',
-                type: 'success',
-            });
-
-            navigation.replace('Home');
+            if (!emailVerified) {
+                setSnackbarMessage('Email belum terverifikasi'); // Set pesan untuk Snackbar
+                setSnackbarVisible(true); // Tampilkan Snackbar
+                return;
+            } else {
+                storeKey('LOGGED_IN', userId);
+                navigation.replace('Home', { userId: userId });
+            }
         } catch (error) {
             const errorMessage = error.message;
-            Toast.show(errorMessage, {
-                duration: 3000,
-                placement: 'bottom',
-                type: 'danger',
-            });
+            setSnackbarMessage(errorMessage); // Set pesan untuk Snackbar
+            setSnackbarVisible(true); // Tampilkan Snackbar
         } finally {
             setIsLoading(false);
         }
@@ -78,6 +90,11 @@ const SignIn = () => {
                 [inputIdentifier]: { value: enteredValue, isValid: true },
             };
         });
+    };
+
+    const [hidePassword, setHidePassword] = useState(true);
+    const togglePasswordVisibility = () => {
+        setHidePassword(!hidePassword);
     };
 
     return (
@@ -99,23 +116,31 @@ const SignIn = () => {
                     </View>
                 </View>
                 <Text style={{ paddingLeft: 20, marginTop: 26, fontWeight: 'bold' }}>Sign In With Email</Text>
-                <TextInput
-                    style={{ width: 297, height: 51, borderWidth: 1, borderRadius: 8, marginHorizontal: 'auto', marginTop: 16, paddingHorizontal: 20, borderColor: '#C2C2C2' }}
-                    placeholder='Username or Email'
-                    label={"EmailOrUsername"}
-                    invalid={!inputs.emailOrUsername.isValid}
-                    onChangeText={inputChangeHandler.bind(this, 'emailOrUsername')}
-                />
-                <TextInput
-                    style={{ width: 297, height: 51, borderWidth: 1, borderRadius: 8, marginHorizontal: 'auto', paddingHorizontal: 20, marginVertical: 10, borderColor: '#C2C2C2' }}
-                    placeholder='Enter Password'
-                    label={"Password"}
-                    invalid={!inputs.password.isValid}
-                    onChangeText={inputChangeHandler.bind(this, 'password')}
-                    secureTextEntry
-                />
+                <View style={{ width: 297, height: 51, borderWidth: 1, borderRadius: 8, marginHorizontal: 'auto', marginTop: 20, paddingHorizontal: 15, borderColor: '#C2C2C2', flexDirection: 'row', alignItems: 'center' }}>
+                        <Ionicons name="mail-outline" size={24} color="gray" />
+                        <TextInput
+                            style={{ flex: 1, paddingLeft:15 }}
+                            placeholder='Enter Email'
+                            label={"Email"}
+                            invalid={!inputs.email.isValid}
+                            onChangeText={inputChangeHandler.bind(this, 'email')}
+                        />
+                    </View>
+                    <View style={{ width: 297, height: 51, borderWidth: 1, borderRadius: 8, marginHorizontal: 'auto', marginTop: 20, paddingHorizontal: 15, borderColor: '#C2C2C2', flexDirection: 'row', alignItems: 'center' }}>
+                        <TouchableOpacity onPress={togglePasswordVisibility}>
+                            <Ionicons name={hidePassword ? 'eye-off-outline' : 'eye-outline' } size={24} color="gray" />
+                        </TouchableOpacity>
+                        <TextInput
+                            style={{ flex: 1, paddingLeft:15 }}
+                            placeholder='Enter Password'
+                            label={"Password"}
+                            secureTextEntry={hidePassword}
+                            invalid={!inputs.password.isValid}
+                            onChangeText={inputChangeHandler.bind(this, 'password')}
+                        />
+                    </View>
                 <Text style={style.forgotPassword} onPress={() => navigation.navigate('ForgotPassword')}>Forgot Password?</Text>
-                <Button children={'Sign In'} onPress={handleSignIn} />
+                <Button children={'Sign In'} onPress={handleLogin} />
                 <Text style={style.text}>Don't have an account? <Text style={{ fontWeight: 'bold' }} onPress={() => navigation.navigate('Signup')}>Create Account</Text></Text>
             </View>
         </View>
