@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Alert, FlatList, Modal, StyleSheet, Text, Button, TextInput, TouchableOpacity, View } from 'react-native';
 import { Image } from 'expo-image';
+import { LinearGradient } from 'expo-linear-gradient';
 import Topbar_2 from '../component/topbar_2';
 
 const PaymentMethodItem = ({ image, cardNumber, expiry, cvc, cardHolder, onRemove }) => (
@@ -25,12 +26,14 @@ const MyCard = () => {
   ]);
 
   const [modalVisible, setModalVisible] = useState(false);
-  const [mdlVisible, setModalVsb] = useState(false);
+  const [mdlVisible, setModalVsb] = useState({vsb: false, cardNumber: '', cardHolder: ''});
   const [newCardNumber, setNewCardNumber] = useState('');
   const [selectedId, setSelectedId] = useState(null);
   const [newExpiry, setNewExpiry] = useState('');
   const [newCvc, setNewCvc] = useState('');
   const [newCardHolder, setNewCardHolder] = useState('');
+  
+  const [errors, setErrors] = useState({});
 
   const handleAddPaymentMethod = () => {
     const newPaymentMethod = {
@@ -49,107 +52,188 @@ const MyCard = () => {
     setNewCardHolder('');
   };
 
-
   const handleClearInput = () => {
     setModalVisible(false);
     setNewCardNumber('');
     setNewExpiry('');
     setNewCvc('');
     setNewCardHolder('');
+    setErrors({});
   };
 
   const handleRemovePaymentMethod = (id) => {
     setPaymentMethods(paymentMethods.filter(method => method.id !== id));
+    // Set to defult
+    // const newPaymentMethod = [
+    //   { id: '1', cardNumber: '1224 5678 9012 3456', expiry: '12/25', cvc: '123', cardHolder: 'John Doe', image: require('../../assets/bri.png') },
+    //   { id: '2', cardNumber: '2345 6789 0123 4567', expiry: '11/24', cvc: '456', cardHolder: 'Jane Smith', image: require('../../assets/bca.png') },
+    //   { id: '3', cardNumber: '3456 7890 1234 5678', expiry: '10/23', cvc: '789', cardHolder: 'Alice Johnson', image: require('../../assets/mandiri.png') }
+    // ];
+    // setPaymentMethods(newPaymentMethod);
+
+  };
+
+  const validateInputs = () => {
+    let valid = true;
+    let errors = {};
+
+    if (newCardNumber.length !== 16 || isNaN(newCardNumber)) {
+      errors.newCardNumber = "Card number must be 16 digits.";
+      valid = false;
+    }
+
+    const expiryPattern = /^(0[1-9]|1[0-2])\/\d{2}$/;
+    if (!expiryPattern.test(newExpiry)) {
+      errors.newExpiry = "Expiry must be in MM/YY format.";
+      valid = false;
+    }
+
+    if (newCvc.length < 3 || newCvc.length > 4 || isNaN(newCvc)) {
+      errors.newCvc = "CVC must be 3 or 4 digits.";
+      valid = false;
+    }
+
+    const namePattern = /^[A-Za-z\s]+$/;
+    if (!namePattern.test(newCardHolder)) {
+      errors.newCardHolder = "Card holder name must be alphabetic.";
+      valid = false;
+    }
+
+    setErrors(errors);
+    return valid;
+  };
+
+  const handleSave = () => {
+    if (validateInputs()) {
+      handleAddPaymentMethod();
+    }
+  };
+
+  const handleExpiryChange = (text) => {
+    if (text.length === 2 && !text.includes('/')) {
+      setNewExpiry(text + '/');
+    } else {
+      setNewExpiry(text);
+    }
   };
 
   return (
-    <View style={{ flex : 1 }}>
-        <Topbar_2 tittle={'MY CARD'}/>
-        <View style={styles.container}>
+    <View style={{ flex: 1 }}>
+      <Topbar_2 tittle={'MY CARD'} />
+      <View style={styles.container}>
         <FlatList
-            data={paymentMethods}
-            renderItem={({ item }) => (
+          data={paymentMethods}
+          renderItem={({ item }) => (
             <PaymentMethodItem
-                cardNumber={item.cardNumber}
-                expiry={item.expiry}
-                cvc={item.cvc}
-                cardHolder={item.cardHolder}
-                image={item.image}
-                onRemove={() => { setModalVsb(true); setSelectedId(item.id); }}
+              cardNumber={item.cardNumber}
+              expiry={item.expiry}
+              cvc={item.cvc}
+              cardHolder={item.cardHolder}
+              image={item.image}
+              onRemove={() => { setModalVsb({ vsb: true, cardNumber: item.cardNumber, cardHolder: item.cardHolder }); setSelectedId(item.id);}}
             />
-            )}
-            keyExtractor={item => item.id}
-            contentContainerStyle={styles.paymentList}
+          )}
+          keyExtractor={item => item.id}
+          contentContainerStyle={styles.paymentList}
         />
         <TouchableOpacity style={styles.addButton} onPress={() => setModalVisible(true)}>
-            <Image source={require('../../assets/add_button.svg')} contentFit='fill' style={{width:80, height:80, borderRadius:30}}/>
+          <Image source={require('../../assets/add_button.svg')} contentFit='fill' style={{ width: 80, height: 80, borderRadius: 30 }} />
         </TouchableOpacity>
 
         <Modal
-            animationType="slide"
-            transparent={true}
-            visible={modalVisible}
-            onRequestClose={() => setModalVisible(false)}
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => setModalVisible(false)}
         >
-            <View style={styles.modalContainer}>
+          <TouchableOpacity style={styles.modalOverlay} onPress={() => setModalVisible(false)} >
+          <View style={styles.modalContainer}>
             <View style={styles.modalView}>
-                <Text style={styles.modalTitle}>Add Payment Method</Text>
-                <TextInput
+              <Text style={styles.modalTitle}>Add Payment Method</Text>
+              {errors.newCardNumber && <Text style={styles.errorText}>{errors.newCardNumber}</Text>}
+              <TextInput
                 placeholder="Card Number"
                 value={newCardNumber}
                 onChangeText={setNewCardNumber}
-                style={styles.input}
+                style={[styles.input, errors.newCardNumber && { borderColor: 'red' }]}
                 keyboardType="numeric"
-                />
-                <TextInput
-                placeholder="BB/TT"
+                maxLength={16}
+              />
+              {errors.newExpiry && <Text style={styles.errorText}>{errors.newExpiry}</Text>}
+              <TextInput
+                placeholder="MM/YY"
                 value={newExpiry}
-                onChangeText={setNewExpiry}
-                style={styles.input}
+                onChangeText={handleExpiryChange}
+                style={[styles.input, errors.newExpiry && { borderColor: 'red' }]}
                 keyboardType="numeric"
-                />
-                <TextInput
+                maxLength={5}
+              />
+              {errors.newCvc && <Text style={styles.errorText}>{errors.newCvc}</Text>}
+              <TextInput
                 placeholder="CVC"
                 value={newCvc}
                 onChangeText={setNewCvc}
-                style={styles.input}
+                style={[styles.input, errors.newCvc && { borderColor: 'red' }]}
                 keyboardType="numeric"
-                />
-                <TextInput
+                maxLength={4}
+              />
+              {errors.newCardHolder && <Text style={styles.errorText}>{errors.newCardHolder}</Text>}
+              <TextInput
                 placeholder="Card Holder Name"
                 value={newCardHolder}
                 onChangeText={setNewCardHolder}
-                style={styles.input}
-                />
-                <TouchableOpacity style={styles.saveButton} onPress={handleAddPaymentMethod}>
-                <Text style={styles.saveButtonText}>Save</Text>
+                style={[styles.input, errors.newCardHolder && { borderColor: 'red' }]}
+              />
+
+              <View style={[styles.buttonContainer, {}]}>
+                <LinearGradient colors={['#EB7802', '#DA421C']} style={styles.button}>
+                    <TouchableOpacity onPress={handleSave}>
+                      <Text style={styles.buttonText}>Save</Text>
+                    </TouchableOpacity>
+                </LinearGradient>      
+                <TouchableOpacity style={styles.button} onPress={handleClearInput}>
+                  <Text style={styles.buttonText}>Cancel</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.cancelButton} onPress={handleClearInput}>
-                <Text style={styles.cancelButtonText}>Cancel</Text>
-                </TouchableOpacity>
+                          
+              </View>
+
             </View>
-            </View>
+          </View>
+          </TouchableOpacity>
         </Modal>
 
         <Modal
           transparent={true}
-          visible={mdlVisible}
+          visible={mdlVisible.vsb}
           animationType="fade"
-          onRequestClose={() => setModalVsb(false)}
+          onRequestClose={() => setModalVsb({ vsb: false, cardNumber: '', cardHolder: '' })}
         >
-          <TouchableOpacity style={styles.modalOverlay} onPress={() => setModalVsb(false)} />
-          <View style={styles.modalContent}>
-            <Text>Hapus metode pembayaran?</Text>
-            <View style={styles.buttonContainer}>
-              <Button title="Yes" onPress={() => {handleRemovePaymentMethod(selectedId);setModalVsb(false);}} />
-              <Button title="No" onPress={() => setModalVsb(false)} />
+          <TouchableOpacity style={styles.modalOverlay} onPress={() => setModalVsb({ vsb: false, cardNumber: '', cardHolder: '' })}>
+          <View style={styles.centeredView}>
+            <View style={styles.modalContent}>
+              <Text style={styles.confirmationText}>Hapus metode pembayaran:</Text>
+              <Text style={styles.cardDetails}>{`${mdlVisible.cardHolder}`}</Text>
+              <Text style={styles.cardDetails}>{`${mdlVisible.cardNumber}`}</Text>
+              <Text style={styles.confirmationText}>dari list MyCard?</Text>
+              <View style={styles.buttonContainer}>
+                <TouchableOpacity style={styles.button} onPress={() => { handleRemovePaymentMethod(selectedId); setModalVsb({ vsb: false, cardNumber: '', cardHolder: '' }); }}>
+                  <Text style={[styles.buttonText]}>Yes</Text>
+                </TouchableOpacity>
+                <LinearGradient colors={['#EB7802', '#DA421C']} style={styles.button}>
+                    <TouchableOpacity onPress={() => setModalVsb({ vsb: false, cardNumber: '', cardHolder: '' })}>
+                      <Text style={styles.buttonText}>No</Text>
+                    </TouchableOpacity>
+                </LinearGradient>                
+              </View>
             </View>
           </View>
+          </TouchableOpacity>
         </Modal>
 
-        </View>
-    </View> 
         
+      </View>
+    </View>
+
   );
 };
 
@@ -165,11 +249,9 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 20,
   },
-
   paymentList: {
     paddingBottom: 100,
   },
-  
   paymentMethodItem: {
     flexDirection: 'row',
     marginBottom: 20,
@@ -241,31 +323,11 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     paddingHorizontal: 10,
   },
-  saveButton: {
-    backgroundColor: '#28a745',
-    borderRadius: 5,
-    padding: 10,
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  saveButtonText: {
-    color: 'white',
-    fontWeight: 'bold',
-  },
-  cancelButton: {
-    backgroundColor: '#dc3545',
-    borderRadius: 5,
-    padding: 10,
-    alignItems: 'center',
-  },
-  cancelButtonText: {
-    color: 'white',
-    fontWeight: 'bold',
-  },
 
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  justifyContent: 'center',
   },
   modalContent: {
     backgroundColor: 'white',
@@ -277,10 +339,53 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     marginTop: 20,
+    width: "100%",
+  },
+  errorText: {
+    color: 'red',
+    marginBottom: 5,
   },
 
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  confirmationText: {
+    marginBottom: 15,
+    textAlign: "center",
+    fontSize: 18,
+    fontWeight: "bold"
+  },
+  cardDetails: {
+    marginBottom: 10,
+    fontSize: 16
+  },
+  
+  button: {
+    borderRadius: 25,
+    padding: 10,
+    elevation: 2,
+    width: "35%",
+    borderWidth: 0.5,
+    marginHorizontal: 20,
+  },
+  buttonText: {
+    fontSize: 18,
+    textAlign: "center",
+    fontWeight: "bold",
+  },
+  
+
+  buttonGradient: {
+    flexDirection: 'row',
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  
 });
 
 export default MyCard;
