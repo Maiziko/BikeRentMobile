@@ -9,7 +9,7 @@ import { destroyKey, getKey } from '../config/localStorage'
 
 const Home = ({navigation, route}) => {
     const { userId } = route.params;
-    const [dataUsers, setDataUsers] = useState([])
+    const [dataUsers, setDataUsers] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {

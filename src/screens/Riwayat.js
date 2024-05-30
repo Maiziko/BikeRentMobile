@@ -4,24 +4,26 @@ import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import Navbar from '../component/navbar';
 import { useNavigation } from '@react-navigation/native';
+import { collection, query, where, getDocs, deleteDoc } from 'firebase/firestore';
+import { firestore } from '../config/firebase'
 
-const RentalHistoryItem = ({ location, price, date, duration, id, isSelected, onSelect }) => (
+const RentalHistoryItem = ({ location, price, date, duration, id, isSelected, onSelect, users }) => (
   <TouchableOpacity onPress={() => onSelect(id)} style={[styles.historyItem, isSelected && styles.selectedItem]}>
     <View style={styles.historyLeft}>
       <View style={styles.historyLocation}>
         <Image source={require('../../assets/nav/loc.svg')} style={styles.icon} />
         <Text style={styles.locText}>{location}</Text>
       </View>
-      <Text style={styles.historyId}>ID: {id}</Text>
+      <Text style={styles.historyId}>ID: BR-{id}</Text>
       <View style={styles.historyPrice}>
         <Image source={require('../../assets/nav/bill.svg')} style={{width: 18, height: 18, marginRight: 5, contentFit: 'fill'}} />
-        <Text style={styles.historyText}>{price}</Text>
+        <Text style={styles.historyText}>Rp.{price}</Text>
       </View>
     </View>
     <View style={styles.historyRight}>
       <View style={styles.historyLocation}>
         <Image source={require('../../assets/clock.svg')} style={{width: 18, height: 18, marginRight: 5, contentFit: 'fill'}} />
-        <Text style={styles.historyDuration}>{duration}</Text>
+        <Text style={styles.historyDuration}>{duration} Jam</Text>
       </View>
       <Text style={styles.historyDate}>{date}</Text>
     </View>
@@ -31,37 +33,42 @@ const RentalHistoryItem = ({ location, price, date, duration, id, isSelected, on
 const Riwayat = ({route}) => {
   const {userId} = route.params;
   const navigation = useNavigation();
-
-  const [rentalHistory, setRentalHistory] = useState([
-    {
-      id: '1',
-      location: 'Outlet A',
-      price: 'Rp200.000',
-      date: '03 Apr 2024 19:15 WIB',
-      duration: '3 Jam',
-    },
-    {
-      id: '2',
-      location: 'Outlet B',
-      price: 'Rp150.000',
-      date: '03 Apr 2024 19:15 WIB',
-      duration: '2 Jam',
-    },
-    {
-      id: '3',
-      location: 'Outlet C',
-      price: 'Rp300.000',
-      date: '03 Apr 2024 19:15 WIB',
-      duration: '5 Jam',
-    },
-  ]);
-
+  const [history, setHistory] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [isSelecting, setIsSelecting] = useState(false);
   const [selectedItems, setSelectedItems] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
-  
+  useEffect(() => {
+      const fetchUserHistory = async () => {
+          try {
+            // Buat referensi ke koleksi 'history'
+            const historyRef = collection(firestore, "history");
+            // Buat query untuk mengambil dokumen dengan id_user yang sesuai
+            const q = query(historyRef, where('id_user', '==', userId));
+            // Eksekusi query
+            const querySnapshot = await getDocs(q);
+            // Ambil data dari setiap dokumen
+            const historyData = querySnapshot.docs.map(doc => ({
+                location: doc.data().loc, 
+                price: doc.data().price,
+                idRent: doc.data().id, 
+                date: doc.data().date, 
+                duration: doc.data().duration, 
+                user: doc.data().id_user,
+                }));
+            setHistory(historyData);
+    
+          } catch (error) {
+              console.error("Error fetching user history:", error);
+          } finally {
+              setIsLoading(false);
+          }
+      };
+
+      fetchUserHistory();
+  }, [userId]);
 
   const toggleSelectionMode = () => {
     if (isSelecting && selectedItems.length > 0) {
@@ -79,34 +86,58 @@ const Riwayat = ({route}) => {
   }
 
   const handleSelectItem = (id) => {
+    
     if (isSelecting) {
       setSelectedItems((prevSelectedItems) => {
         if (prevSelectedItems.includes(id)) {
           return prevSelectedItems.filter(item => item !== id);
         } else {
-          return [...prevSelectedItems, id];
+          return [...prevSelectedItems, id];     
         }
       });
-    }
-  };
-
-  const handleDelete = () => {
-    setRentalHistory((prevHistory) => prevHistory.filter(item => !selectedItems.includes(item.id)));
-    setShowModal(false);
-    setIsSelecting(false);
-    setDeleting(false);
-    setSelectedItems([]);
+      console.log(selectedItems);
+    }  
   };
 
   const selectAllItems = () => {
     if (isSelecting) {
-      if (selectedItems.length === rentalHistory.length) {
+      if (selectedItems.length === history.length) {
         setSelectedItems([]);
       } else {
-        setSelectedItems(rentalHistory.map(item => item.id));
+        setSelectedItems(history.map(item => item.idRent));
       }
     }
   };  
+
+  const handleDelete = async () => {
+    try {     
+        const historyRef = collection(firestore, "history");    
+        for (const item of selectedItems) {
+            const q = query(historyRef, where('id', '==', item));
+            const querySnapshot = await getDocs(q);
+    
+            if (!querySnapshot.empty) {
+            querySnapshot.forEach(async (doc) => {
+                console.log(`Deleting document with ID: ${doc.id}`); // Debugging: Log dokumen yang dihapus
+                await deleteDoc(doc.ref);
+            });
+            } else {
+            console.log(`No document found for idRent: ${item}`); // Debugging: Log jika tidak ada dokumen ditemukan
+            }
+        }
+        // Perbarui daftar history di aplikasi dengan menghapus item yang dipilih
+        setHistory((prevHistory) => prevHistory.filter(item => !selectedItems.includes(item.idRent)));
+        // Reset selectedItems
+        setSelectedItems([]);
+        setShowModal(false);
+        setIsSelecting(false);
+        setDeleting(false);
+      } catch (error) {
+        console.error("Error deleting history:", error);
+      } finally {
+        // Setelah selesai menghapus, atur state lain jika diperlukan
+    }
+};
 
   return (
     <View style={{ flex: 1 }}>
@@ -132,23 +163,23 @@ const Riwayat = ({route}) => {
       <View style={styles.container}>
         {isSelecting && (
           <TouchableOpacity onPress={selectAllItems}>
-            <Text style={styles.selectAll}>{selectedItems.length === rentalHistory.length ? 'Batalkan Semua (X)' : `Pilih Semua (${selectedItems.length})`}</Text>
+            <Text style={styles.selectAll}>{selectedItems.length === history.length ? 'Batalkan Semua (X)' : `Pilih Semua (${selectedItems.length})`}</Text>
           </TouchableOpacity>
         )}
         <FlatList
-          data={rentalHistory}
+          data={history}
           renderItem={({ item }) => (
             <RentalHistoryItem
               location={item.location}
               price={item.price}
               date={item.date}
               duration={item.duration}
-              id={item.id}
-              isSelected={selectedItems.includes(item.id)}
+              id={item.idRent}
+              isSelected={selectedItems.includes(item.idRent)}
               onSelect={handleSelectItem}
             />
           )}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => item.idRent}
           contentContainerStyle={styles.historyList}
         />
       </View>

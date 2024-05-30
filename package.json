@@ -13,6 +13,8 @@
     "@expo/metro-runtime": "~3.2.1",
     "@react-native-async-storage/async-storage": "1.23.1",
     "@react-native-community/geolocation": "^3.2.1",
+    "@react-native-firebase/app": "^20.0.0",
+    "@react-native-firebase/firestore": "^20.0.0",
     "@react-navigation/native": "^6.1.17",
     "@react-navigation/stack": "^6.3.29",
     "expo": "^51.0.7",
@@ -20,6 +22,7 @@
     "expo-camera": "~15.0.9",
     "expo-font": "~12.0.5",
     "expo-image": "~1.12.9",
+    "expo-image-picker": "~15.0.5",
     "expo-linear-gradient": "~13.0.2",
     "expo-location": "~17.0.1",
     "expo-navigation-bar": "~3.0.4",
@@ -34,8 +37,7 @@
     "react-native-maps": "^1.15.1",
     "react-native-paper": "^5.12.3",
     "react-native-toast-notifications": "^3.4.0",
-    "react-native-web": "~0.19.10",
-    "expo-image-picker": "~15.0.5"
+    "react-native-web": "~0.19.10"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"
