@@ -92,13 +92,15 @@ const Profile = ({route}) => {
                             />
                             <Text style={{ paddingLeft: 20, fontSize: 15, fontWeight: 'bold', color: '#004268' }}>{dataUsers.nomorTelp}</Text>
                     </View>
-                    <View style={styles.tags}>
+
+                    <TouchableOpacity style={styles.tags} onPress={() => navigation.navigate('MyCard', {userId})}>
                             <Image source={require('../../assets/Card.svg')}
                                 // source={{ uri: dataUsers.imageUri ? dataUsers.imageUri : `https://ui-avatars.com/api/?name=${dataUsers.fullname}` }}
                                 style={{ width: 39, height: 39, borderRadius: 50 }}
                             />
                             <Text style={{ paddingLeft: 20, fontSize: 15, fontWeight: 'bold', color: '#004268' }}>My Card</Text>
-                    </View>
+                    </TouchableOpacity>
+
                     <TouchableOpacity style={styles.tags} onPress={handleLogout}>
                             <Image source={require('../../assets/Logout.svg')}
                                 // source={{ uri: dataUsers.imageUri ? dataUsers.imageUri : `https://ui-avatars.com/api/?name=${dataUsers.fullname}` }}
