@@ -185,7 +185,7 @@ const MyCard = () => {
                 style={[styles.input, errors.newCardHolder && { borderColor: 'red' }]}
               />
 
-              <View style={[styles.buttonContainer, {}]}>
+              <View style={[styles.buttonContainer]}>
                 <LinearGradient colors={['#EB7802', '#DA421C']} style={styles.button}>
                     <TouchableOpacity onPress={handleSave}>
                       <Text style={styles.buttonText}>Save</Text>

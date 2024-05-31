@@ -33,7 +33,7 @@ const Home = ({navigation, route}) => {
     console.log('user ID in home:', userId);
     return (
         <>
-            <Map/>
+            <Map userId={userId}/>
             <Navbar userId={userId}/>
             <Topbar userId={userId}/>
         </>

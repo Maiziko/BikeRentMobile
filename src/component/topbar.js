@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, Alert } from 'react-native';
+import { StyleSheet, Text, View, Alert, TouchableOpacity } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Image } from 'expo-image';
 import { Link } from 'expo-router';
@@ -7,11 +7,13 @@ import { collection, onSnapshot, query, where } from 'firebase/firestore';
 import { doc, getDoc } from 'firebase/firestore';
 import { firebaseAuth, firestore } from '../config/firebase'
 import { destroyKey, getKey } from '../config/localStorage'
+import { useNavigation } from '@react-navigation/native';
 
 const Topbar = ({userId}) => {
     const [dataUsers, setDataUsers] = useState([])
     const [isLoading, setIsLoading] = useState(false);
     const [hasNotifications, setHasNotifications] = useState(false);
+    const navigation = useNavigation();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -43,14 +45,15 @@ const Topbar = ({userId}) => {
         <View style={styles.container}>
             <LinearGradient colors={['#EB7802', '#DA421C']} style={styles.container}/>
             <View style={styles.left}>
-                <Link href='/'>
+                <TouchableOpacity onPress={() => navigation.navigate('Profile', {userId})}>
                     <View>
                         <Image source={{ uri: dataUsers.imageUri ? dataUsers.imageUri : `https://ui-avatars.com/api/?name=${dataUsers.fullname}` }} contentFit='fill' style={{width:55, height:55, borderRadius:30}}/>
                     </View>
-                </Link>
+                </TouchableOpacity>
+
                 <View style={{paddingLeft:10}}>
                     <Text style={{color:'#FFFFFF', fontWeight:'bold', fontSize:21}}>Hello, {dataUsers.fullname}</Text>
-                    <Text style={{color:'#FFFFFF', fontWeight:'semibold', fontSize:15}}>{dataUsers.umur}</Text>
+                    <Text style={{color:'#FFFFFF', fontWeight:'semibold', fontSize:15}}>{dataUsers.umur} Tahun</Text>
                 </View>
             </View>
             <View style={styles.right}>

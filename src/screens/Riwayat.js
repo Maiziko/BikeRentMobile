@@ -163,7 +163,7 @@ const Riwayat = ({route}) => {
       <View style={styles.container}>
         {isSelecting && (
           <TouchableOpacity onPress={selectAllItems}>
-            <Text style={styles.selectAll}>{selectedItems.length === history.length ? 'Batalkan Semua (X)' : `Pilih Semua (${selectedItems.length})`}</Text>
+            <Text style={styles.selectAll}>{selectedItems.length === history.length ? 'Batalkan Semua (X)' : `Pilih Semua (all)`}</Text>
           </TouchableOpacity>
         )}
         <FlatList
