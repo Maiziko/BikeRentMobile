@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Text, Button, Linking, Modal, TouchableOpacity } from 'react-native';
-import MapView, { Marker } from 'react-native-maps';
+import { StyleSheet, View, Text, Button, Linking, Modal, TouchableOpacity, TouchableOpacityComponent } from 'react-native';
+import MapView, { Marker, MarkerAnimated } from 'react-native-maps';
 import * as Location from 'expo-location';
-import { findNearest } from 'geolib';
+import { findNearest, isPointWithinRadius } from 'geolib';
 import { Image } from 'expo-image';
-import { collection, query, where, getDocs, deleteDoc } from 'firebase/firestore';
+import { collection, query, where, getDocs, deleteDoc, updateDoc } from 'firebase/firestore';
 import { firestore } from '../config/firebase';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
@@ -17,6 +17,7 @@ const Map = ({userId}) => {
   const [posSepeda, setPos] = useState([]);
   const [selectedPos, setSelectedPos] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [bikeLocation, setBikeLocation] = useState([]);
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -25,6 +26,7 @@ const Map = ({userId}) => {
         const pos = collection(firestore, "Pos");
         const querySnapshot = await getDocs(pos);
         const posData = querySnapshot.docs.map(doc => ({
+          idpos: doc.data().idpos,
           latitude: doc.data().location.latitude,
           longitude: doc.data().location.longitude,
           nBike: doc.data().nBike,
@@ -37,6 +39,10 @@ const Map = ({userId}) => {
     };
 
     fetchPos();
+
+    const intervalId = setInterval(fetchPos, 3000);
+
+    return () => clearInterval(intervalId);
   }, []);
 
   useEffect(() => {
@@ -65,6 +71,18 @@ const Map = ({userId}) => {
     return () => clearInterval(intervalId);
   }, []);
 
+  useEffect(() => {
+    getBikeLocation()
+    const intervalId = setInterval(getBikeLocation, 3000);
+    return () => clearInterval(intervalId);
+  }, [])
+
+  useEffect(() => {
+    updateNumberOfBikeInPos()
+    const intervalId = setInterval(updateNumberOfBikeInPos, 3000);
+    return () => clearInterval(intervalId)
+  })
+
   const handleMarkerPress = (pos) => {
     setSelectedPos(pos);
     setShowModal(true);
@@ -74,7 +92,14 @@ const Map = ({userId}) => {
   const findNearestBikeStation = () => {
     if (!userLocation) return;
   
-    const nearestStation = findNearest(userLocation, BIKE_STATIONS);
+    const bikeStations = []
+    posSepeda.forEach((pos) => {
+      bikeStations.push({
+        latitude: pos.latitude,
+        longitude: pos.longitude
+      })
+    })
+    const nearestStation = findNearest(userLocation, bikeStations);
     console.log('Nearest bike station:', nearestStation);
   
     const { latitude, longitude } = nearestStation;
@@ -87,6 +112,49 @@ const Map = ({userId}) => {
     // Open the Google Maps URL in a web browser
     Linking.openURL(googleMapsURL);
   };
+
+  const getBikeLocation = async () => {
+    const bikeRef = collection(firestore, "bike")
+    const bikeQuery = query(bikeRef)
+    const bikeSnapshot = await getDocs(bikeQuery)
+
+    const newBikeLocation = []
+    bikeSnapshot.forEach(doc => {
+      const latitude = doc.data().location.latitude
+      const longitude = doc.data().location.longitude
+      const bikeID = doc.data().bikeID
+      newBikeLocation.push({
+        bikeID: bikeID,
+        latitude: latitude,
+        longitude: longitude
+      })
+    })
+
+    setBikeLocation(newBikeLocation);
+  }
+
+  const updateNumberOfBikeInPos = async () => {
+    posSepeda.forEach(async (pos) => {
+      const posLocation = {latitude: pos.latitude, longitude: pos.longitude}
+      const radius = 2; // we define a bike must be in 2 meter radius from posLocation to belong to that pos
+      let nBike = 0;
+      bikeLocation.forEach(async(bike) => {
+        const bikePosition = {latitude: bike.latitude, longitude: bike.longitude}
+        if (isPointWithinRadius(bikePosition, posLocation, radius)) {
+          const bikeRef = collection(firestore, "bike")
+          const bikeQuery = query(bikeRef, where("bikeID", "==", bike.bikeID))
+          const bikeSnapshot = await getDocs(bikeQuery);
+          if (bikeSnapshot.docs[0].data().rented == false) {
+            nBike = nBike + 1
+          }
+        }
+      })
+      const posRef = collection(firestore, "Pos")
+      const posQuery = query(posRef, where("idpos", "==", pos.idpos))
+      const posSnapshot = await getDocs(posQuery)
+      await updateDoc(posSnapshot.docs[0].ref, { nBike: nBike })
+    })
+  }
 
   return (
     <View style={styles.container}>
@@ -106,6 +174,16 @@ const Map = ({userId}) => {
             pinColor="blue"
           />
         )}
+        {bikeLocation && (
+          bikeLocation.map((bikeLocation, index) => (
+            <Marker
+              key={index}
+              coordinate={{latitude: bikeLocation.latitude, longitude: bikeLocation.longitude}}
+              title={"BikeID: "+bikeLocation.bikeID}
+              pinColor="red"
+            />
+          ))
+        )}
         {posSepeda.map((pos, index) => (
           <Marker
             key={index}
@@ -118,6 +196,14 @@ const Map = ({userId}) => {
           </Marker>
         ))}
       </MapView>
+      
+      <View style={styles.findNearestButtonContainer}>
+        <LinearGradient colors={['#D93F1E', '#EC7A01']} style={{padding: 10, borderRadius: 20, width: '80%'}}>
+          <TouchableOpacity   onPress={findNearestBikeStation}>
+            <Text style={styles.findNearestButtonText}>Tampilkan Pos Terdekat</Text>
+          </TouchableOpacity>
+        </LinearGradient>
+      </View>  
       <Modal
         visible={showModal}
         animationType="slide"
@@ -147,17 +233,34 @@ const Map = ({userId}) => {
           </View>
         </View>
       </Modal>
+      
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  findNearestButtonContainer: {
+    // Adjusted to fit the text
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'absolute',
+    width: '100%',
+    bottom: 50,
+    zIndex: 99999
+  },
+  findNearestButtonText: {
+    fontSize: 14, // Adjusted font size
+    color: 'white',
+    textAlign: 'center'
+  },
   container: {
     flex: 1,
+    position: 'relative'
   },
   map: {
     width: '100%',
     height: '100%',
+    position: 'relative'
   },
   modalContainer: {
     flex: 1,

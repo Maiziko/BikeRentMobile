@@ -5,31 +5,18 @@ import { firestore, firebaseAuth } from '../config/firebase';
 import { collection, addDoc, query, where, getDocs, updateDoc, Timestamp } from 'firebase/firestore';
 import { onAuthStateChanged } from 'firebase/auth';
 
-const BarcodeScanner = () => {
+const BarcodeScanner = ({navigation, route}) => {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
   const [scannedData, setScannedData] = useState(null);
   const [cameraActive, setCameraActive] = useState(true);
-  // const [currentUser, setCurrentUser] = useState("null");
-  const [currentUser, setCurrentUser] = useState(null);
+  const currentUser = route.params.userId
 
   useEffect(() => {
     (async () => {
       const { status } = await Camera.requestCameraPermissionsAsync();
       setHasPermission(status === 'granted');
     })();
-
-    // const unsubscribe = onAuthStateChanged(firebaseAuth, (user) => {
-    //   if (user) {
-    //     setCurrentUser(user);
-    //   } else {
-    //     setCurrentUser(null);
-    //   }
-    // });
-
-    // return () => unsubscribe();
-
-    setCurrentUser("richard");
   }, []);
 
   const handleBarcodeScanned = async ({ type, data }) => {
@@ -44,19 +31,7 @@ const BarcodeScanner = () => {
       return;
     }
 
-    // Convert bikeID from string to number
-    const bikeID = parseInt(data, 10);
-
-    // Check if bikeID is a valid number
-    if (isNaN(bikeID)) {
-      Alert.alert('Invalid QR code', 'The scanned QR code does not contain a valid bike ID.');
-      setScanned(false);
-      setCameraActive(true);
-      return;
-    }
-
-    // Get current user's ID and current timestamp
-    // const userID = currentUser.uid;
+    const bikeID = data;
     const userID = currentUser;
     const currentTimestamp = Timestamp.now();
 
@@ -72,13 +47,20 @@ const BarcodeScanner = () => {
 
       if (!querySnapshot.empty) {
         let documentUpdated = false;
-        querySnapshot.forEach(async (doc) => {
+        const updateDocuments = querySnapshot.docs.map(async (doc) => {
           if (doc.data().userID === userID) {
             await updateDoc(doc.ref, { rentalEnd: currentTimestamp });
+            const bikeRef = collection(firestore, "bike")
+            const bikeQuery = query(bikeRef, where("bikeID", "==", bikeID))
+            const bikeSnapshot = await getDocs(bikeQuery);
+            await updateDoc(bikeSnapshot.docs[0].ref, { rented: false })
             documentUpdated = true;
             Alert.alert('Rental ended!', `Bike ID: ${bikeID}\nRental ID: ${doc.id}\nRental ended successfully.`);
           }
         });
+
+        await Promise.all(updateDocuments);
+
         if (!documentUpdated) {
           Alert.alert('Error', 'You can only end your own rental.');
         }
@@ -91,12 +73,19 @@ const BarcodeScanner = () => {
           rentalEnd: null,
         });
 
+        const bikeRef = collection(firestore, "bike")
+        const bikeQuery = query(bikeRef, where("bikeID", "==", bikeID))
+        const bikeSnapshot = await getDocs(bikeQuery);
+        await updateDoc(bikeSnapshot.docs[0].ref, { rented: true })
+
         Alert.alert('Rental started!', `Bike ID: ${bikeID}\nRental ID: ${rentalDocRef.id}`);
       }
     } catch (error) {
       console.error("Error handling barcode scan: ", error);
       Alert.alert('Error', 'There was an error processing your request.');
     }
+
+    navigation.navigate('Home', {userId: currentUser});
   };
 
   if (hasPermission === null) {
@@ -124,17 +113,6 @@ const BarcodeScanner = () => {
             <View style={styles.bottomOverlay} />
           </View>
         </View>
-      )}
-      {scanned && (
-        <>
-          <Button title={'Tap to Scan Again'} onPress={() => {
-            setScanned(false);
-            setCameraActive(true);
-          }} />
-          {scannedData && (
-            <Text style={styles.scannedData}>Scanned Data: {scannedData}</Text>
-          )}
-        </>
       )}
     </View>
   );
