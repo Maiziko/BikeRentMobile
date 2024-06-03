@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, Alert, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, Alert, TouchableOpacity, Pressable } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Image } from 'expo-image';
 import { Link } from 'expo-router';
@@ -37,8 +37,10 @@ const Topbar = ({userId}) => {
     const handleNotificationClick = () => {
         // Logic to navigate to the notification page and mark notifications as read
         setHasNotifications(false);
-        Alert.alert('Navigating to notifications page...');
+        // Alert.alert('Navigating to notifications page...');
         // Implement actual navigation logic here
+        console.log('handlenotifclikc', userId)
+        navigation.navigate('Notification', {userId});
     };
 
     return (    
@@ -57,7 +59,7 @@ const Topbar = ({userId}) => {
                 </View>
             </View>
             <View style={styles.right}>
-                <Link href='/' onPress={handleNotificationClick}>
+                <TouchableOpacity onPress={handleNotificationClick}>
                     <View style={{flex:1, position:'absolute', alignItems:'center', justifyContent:'center'}}>
                         <Image 
                             source={hasNotifications 
@@ -67,7 +69,7 @@ const Topbar = ({userId}) => {
                             style={{width:39, height:39}}
                         />
                     </View>
-                </Link>
+                </TouchableOpacity>
             </View>
         </View>
     );
@@ -94,7 +96,7 @@ const styles = StyleSheet.create({
     right: {
         position: 'absolute',
         top: 30,
-        right:25,
+        right: 60,
     },
 });
 

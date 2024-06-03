@@ -11,6 +11,7 @@ import MyCard from '../screens/MyCard';
 import Profile from '../screens/Profile';
 import UpdateProfile from '../screens/UpdateProfile';
 import Riwayat from '../screens/Riwayat';
+import Notification from '../screens/Notification';
 
 const Stack = createStackNavigator()
 
@@ -29,6 +30,7 @@ const Routes = () => {
             <Stack.Screen name= 'History' component ={Riwayat} options={{ headerShown: false }}/>
             <Stack.Screen name= 'Profile' component ={Profile} options={{ headerShown: false }}/>
             <Stack.Screen name= 'UpdateProfile' component ={UpdateProfile} options={{ headerShown: false }}/>
+            <Stack.Screen name= 'Notification' component ={Notification} options={{ headerShown: false }}/>
         </Stack.Navigator>
       </NavigationContainer>
     </View>
