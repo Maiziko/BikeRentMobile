@@ -55,6 +55,13 @@ const BarcodeScanner = ({navigation, route}) => {
             const bikeSnapshot = await getDocs(bikeQuery);
             await updateDoc(bikeSnapshot.docs[0].ref, { rented: false })
             documentUpdated = true;
+
+            const notificationRef = await addDoc(collection(firestore, 'Rental'), {
+              message: "You have ended rental on bike " + {bikeID},
+              timeStamp: currentTimestamp,
+              userId: userID
+            })
+
             Alert.alert('Rental ended!', `Bike ID: ${bikeID}\nRental ID: ${doc.id}\nRental ended successfully.`);
           }
         });
@@ -77,6 +84,14 @@ const BarcodeScanner = ({navigation, route}) => {
         const bikeQuery = query(bikeRef, where("bikeID", "==", bikeID))
         const bikeSnapshot = await getDocs(bikeQuery);
         await updateDoc(bikeSnapshot.docs[0].ref, { rented: true })
+
+        const notificationRef = await addDoc(collection(firestore, 'Rental'), {
+          message: "You have started rental on bike " + {bikeID},
+          timeStamp: currentTimestamp,
+          userId: userID
+        })
+
+
 
         Alert.alert('Rental started!', `Bike ID: ${bikeID}\nRental ID: ${rentalDocRef.id}`);
       }
