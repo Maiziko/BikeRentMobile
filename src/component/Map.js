@@ -5,10 +5,11 @@ import * as Location from 'expo-location';
 import { findNearest, isPointWithinRadius } from 'geolib';
 import { Image } from 'expo-image';
 import { collection, query, where, getDocs, deleteDoc, updateDoc } from 'firebase/firestore';
-import { firestore } from '../config/firebase';
+import { firestore, realtime } from '../config/firebase';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
-
+import { getDatabase, ref, onValue, update, get, child, equalTo, orderByChild  } from "firebase/database";
+  // import { getDatabase, ref, query, get, update, child, equalTo, orderByChild } from "firebase/database";
 
 
 const Map = ({userId}) => {
@@ -20,30 +21,57 @@ const Map = ({userId}) => {
   const [bikeLocation, setBikeLocation] = useState([]);
   const navigation = useNavigation();
 
-  useEffect(() => {
-    const fetchPos = async () => {
-      try {
-        const pos = collection(firestore, "Pos");
-        const querySnapshot = await getDocs(pos);
-        const posData = querySnapshot.docs.map(doc => ({
-          idpos: doc.data().idpos,
-          latitude: doc.data().location.latitude,
-          longitude: doc.data().location.longitude,
-          nBike: doc.data().nBike,
-          name: doc.data().name,
+  // useEffect(() => {
+  //   const fetchPos = async () => {
+  //     try {
+  //       const pos = collection(firestore, "Pos");
+  //       const querySnapshot = await getDocs(pos);
+  //       const posData = querySnapshot.docs.map(doc => ({
+  //         idpos: doc.data().idpos,
+  //         latitude: doc.data().location.latitude,
+  //         longitude: doc.data().location.longitude,
+  //         nBike: doc.data().nBike,
+  //         name: doc.data().name,
+  //       }));
+  //       setPos(posData);
+  //     } catch (error) {
+  //       console.error("Error fetching pos data:", error);
+  //     }
+  //   };
+
+  //   fetchPos();
+
+  //   const intervalId = setInterval(fetchPos, 3000);
+
+  //   return () => clearInterval(intervalId);
+  // }, []);
+
+const posRef = ref(realtime, 'Pos');
+
+useEffect(() => {
+    const fetchPos = () => {
+      onValue(posRef, (snapshot) => {
+        const data = snapshot.val();
+        const posData = Object.keys(data).map(key => ({
+          idpos: key,
+          latitude: data[key].latitude,
+          longitude: data[key].longitude,
+          nBike: data[key].nBike,
+          name: data[key].name,
         }));
         setPos(posData);
-      } catch (error) {
+        console.log('Pos data:', posData);
+      }, (error) => {
         console.error("Error fetching pos data:", error);
-      }
+      });
     };
-
     fetchPos();
-
-    const intervalId = setInterval(fetchPos, 3000);
-
-    return () => clearInterval(intervalId);
+    // Cleanup listener on unmount
+    return () => {
+      posRef.off();
+    };
   }, []);
+
 
   useEffect(() => {
     const getLocation = async () => {
@@ -71,17 +99,17 @@ const Map = ({userId}) => {
     return () => clearInterval(intervalId);
   }, []);
 
-  useEffect(() => {
-    getBikeLocation()
-    const intervalId = setInterval(getBikeLocation, 3000);
-    return () => clearInterval(intervalId);
-  }, [])
+  // useEffect(() => {
+  //   getBikeLocation()
+  //   const intervalId = setInterval(getBikeLocation, 3000);
+  //   return () => clearInterval(intervalId);
+  // }, [])
 
-  useEffect(() => {
-    updateNumberOfBikeInPos()
-    const intervalId = setInterval(updateNumberOfBikeInPos, 3000);
-    return () => clearInterval(intervalId)
-  })
+  // useEffect(() => {
+  //   updateNumberOfBikeInPos()
+  //   const intervalId = setInterval(updateNumberOfBikeInPos, 3000);
+  //   return () => clearInterval(intervalId)
+  // })
 
   const handleMarkerPress = (pos) => {
     setSelectedPos(pos);
@@ -113,73 +141,197 @@ const Map = ({userId}) => {
     Linking.openURL(googleMapsURL);
   };
 
-  const getBikeLocation = async () => {
-    const bikeRef = collection(firestore, "bike")
-    const bikeQuery = query(bikeRef)
-    const bikeSnapshot = await getDocs(bikeQuery)
+  // const getBikeLocation = async () => {
+  //   const bikeRef = collection(firestore, "bike")
+  //   const bikeQuery = query(bikeRef)
+  //   const bikeSnapshot = await getDocs(bikeQuery)
 
-    const newBikeLocation = []
-    bikeSnapshot.forEach(doc => {
-      const latitude = doc.data().location.latitude
-      const longitude = doc.data().location.longitude
-      const bikeID = doc.data().bikeID
-      newBikeLocation.push({
-        bikeID: bikeID,
-        latitude: latitude,
-        longitude: longitude
-      })
-    })
+  //   const newBikeLocation = []
+  //   bikeSnapshot.forEach(doc => {
+  //     const latitude = doc.data().location.latitude
+  //     const longitude = doc.data().location.longitude
+  //     const bikeID = doc.data().bikeID
+  //     newBikeLocation.push({
+  //       bikeID: bikeID,
+  //       latitude: latitude,
+  //       longitude: longitude
+  //     })
+  //   })
 
-    setBikeLocation(newBikeLocation);
+  //   setBikeLocation(newBikeLocation);
+  // }
+const bikeRef = ref(realtime, 'Bike');
+
+const getBikeLocation = () => {
+    onValue(bikeRef, (snapshot) => {
+        const data = snapshot.val();
+        const newBikeLocation = [];
+
+        Object.keys(data).forEach(key => {
+            const bike = data[key];
+            newBikeLocation.push({
+                bikeID: key,
+                latitude: bike.latitude,
+                longitude: bike.longitude,
+                rented: bike.rented
+            });
+        });
+
+        setBikeLocation(newBikeLocation);
+        console.log('nwebike',newBikeLocation);
+    }, (error) => {
+        console.error("Error fetching bike data:", error);
+    });
+};
+
+useEffect(() => {
+    getBikeLocation();
+
+    // Cleanup listener on unmount
+    return () => {
+        bikeRef.off();
+    };
+}, []);
+
+
+  // const updateNumberOfBikeInPos = async () => {
+  //   posSepeda.forEach(async (pos) => {
+  //     const posLocation = {latitude: pos.latitude, longitude: pos.longitude}
+  //     const radius = 2; // we define a bike must be in 2 meter radius from posLocation to belong to that pos
+  //     let nBike = 0;
+  //     bikeLocation.forEach(async(bike) => {
+  //       const bikePosition = {latitude: bike.latitude, longitude: bike.longitude}
+  //       if (isPointWithinRadius(bikePosition, posLocation, radius)) {
+  //         const bikeRef = collection(firestore, "bike")
+  //         const bikeQuery = query(bikeRef, where("bikeID", "==", bike.bikeID))
+  //         const bikeSnapshot = await getDocs(bikeQuery);
+  //         if (bikeSnapshot.docs[0].data().rented == false) {
+  //           nBike = nBike + 1
+  //         }
+  //       }
+  //     })
+  //     const posRef = collection(firestore, "Pos")
+  //     const posQuery = query(posRef, where("idpos", "==", pos.idpos))
+  //     const posSnapshot = await getDocs(posQuery)
+  //     await updateDoc(posSnapshot.docs[0].ref, { nBike: nBike })
+  //   })
+  // }
+
+  // import { getDatabase, ref, query, get, update, child, equalTo, orderByChild } from "firebase/database";
+
+const updateNumberOfBikeInPos = async () => {
+  // const db = getDatabase();
+
+  // Fetch all positions
+  // const posRef = ref(db, 'Pos');
+  const posSnapshot = await get(posRef);
+  const posData = posSnapshot.val();
+
+  if (!posData) {
+    return;
   }
 
-  const updateNumberOfBikeInPos = async () => {
-    posSepeda.forEach(async (pos) => {
-      const posLocation = {latitude: pos.latitude, longitude: pos.longitude}
-      const radius = 2; // we define a bike must be in 2 meter radius from posLocation to belong to that pos
-      let nBike = 0;
-      bikeLocation.forEach(async(bike) => {
-        const bikePosition = {latitude: bike.latitude, longitude: bike.longitude}
-        if (isPointWithinRadius(bikePosition, posLocation, radius)) {
-          const bikeRef = collection(firestore, "bike")
-          const bikeQuery = query(bikeRef, where("bikeID", "==", bike.bikeID))
-          const bikeSnapshot = await getDocs(bikeQuery);
-          if (bikeSnapshot.docs[0].data().rented == false) {
-            nBike = nBike + 1
-          }
-        }
-      })
-      const posRef = collection(firestore, "Pos")
-      const posQuery = query(posRef, where("idpos", "==", pos.idpos))
-      const posSnapshot = await getDocs(posQuery)
-      await updateDoc(posSnapshot.docs[0].ref, { nBike: nBike })
-    })
+  // Convert positions to an array
+  const posArray = Object.keys(posData).map(key => ({
+    idpos: key,
+    ...posData[key]
+  }));
+
+  // Fetch all bike locations
+  // const bikeRef = ref(db, 'Bike');
+  const bikeSnapshot = await get(bikeRef);
+  const bikeData = bikeSnapshot.val();
+
+  if (!bikeData) {
+    return;
   }
 
+  // Convert bike locations to an array
+  const bikeArray = Object.keys(bikeData).map(key => ({
+    bikeID: key,
+    ...bikeData[key]
+  }));
+
+  for (const pos of posArray) {
+    const posLocation = { latitude: pos.latitude, longitude: pos.longitude };
+    const radius = 2; // 2 meter radius
+    let nBike = 0;
+
+    for (const bike of bikeArray) {
+      const bikePosition = { latitude: bike.latitude, longitude: bike.longitude };
+      if (isPointWithinRadius(bikePosition, posLocation, radius)) {
+        nBike++;
+      }
+    }
+
+    const posRef = ref(realtime, `Pos/${pos.idpos}`);
+    await update(posRef, { nBike });
+  }
+};
+
+
+  // const updateNumberOfBikeInPos = async () => {
+  //     const posLocation = posSepeda.map(pos => ({
+  //         idpos: pos.idpos,
+  //         location: {latitude: pos.latitude, longitude: pos.longitude},
+  //         nBike: 0 // initialize with 0
+  //     }));
+  
+  //     onValue(bikeRef, (snapshot) => {
+  //         const bikes = snapshot.val();
+  
+  //         // Reset nBike count for all positions
+  //         posLocation.forEach(pos => pos.nBike = 0);
+  
+  //         // Count bikes within the radius
+  //         Object.keys(bikes).forEach(key => {
+  //             const bike = bikes[key];
+  //             const bikePosition = {latitude: bike.latitude, longitude: bike.longitude};
+  
+  //             posLocation.forEach(pos => {
+  //                 if (isPointWithinRadius(bikePosition, pos.location, 2) && bike.rented === false) {
+  //                     pos.nBike += 1;
+  //                 }
+  //             });
+  //         });
+  
+  //         // Update the nBike count in Realtime Database
+  //         posLocation.forEach(pos => {
+  //             const posUpdateRef = ref(realtime, `Pos/${pos.idpos}`);
+  //             update(posUpdateRef, { nBike: pos.nBike });
+  //         });
+  //     });
+  // };
+  
+  useEffect(() => {
+      updateNumberOfBikeInPos();
+  }, [bikeLocation]);
+  
+  
   return (
     <View style={styles.container}>
       <MapView style={styles.map} initialRegion={initialRegion}>
         {initialRegion && (
           <Marker
-            coordinate={initialRegion}
+            coordinate={{latitude: initialRegion.latitude, longitude: initialRegion.longitude}}
             title="Your Location"
             description="You are here!"
           />
         )}
         {userLocation && (
           <Marker
-            coordinate={userLocation}
+            coordinate={{latitude: userLocation.latitude, longitude: userLocation.longitude}}
             title="User Location"
             description="User is here!"
             pinColor="blue"
           />
         )}
         {bikeLocation && (
-          bikeLocation.map((bikeLocation, index) => (
+          bikeLocation.map((bike, index) => (
             <Marker
               key={index}
-              coordinate={{latitude: bikeLocation.latitude, longitude: bikeLocation.longitude}}
-              title={"BikeID: "+bikeLocation.bikeID}
+              coordinate={{latitude: bike.latitude, longitude: bike.longitude}}
+              title={"BikeID: "+bike.bikeID}
               pinColor="red"
             />
           ))

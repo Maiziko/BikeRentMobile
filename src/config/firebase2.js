@@ -3,18 +3,17 @@ import { getFirestore } from "firebase/firestore"
 import { getStorage } from "firebase/storage"
 import { initializeAuth, getReactNativePersistence } from "firebase/auth"
 import ReactNativeAsyncStorage from "@react-native-async-storage/async-storage";
-import { getDatabase } from "firebase/database";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCPi3bXFQrElpQiI-F9SW02zseaOhPLJyU",
-  authDomain: "bikegps-e1f2f.firebaseapp.com",
-  databaseURL: "https://bikegps-e1f2f-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "bikegps-e1f2f",
-  storageBucket: "bikegps-e1f2f.appspot.com",
-  messagingSenderId: "646124536795",
-  appId: "1:646124536795:web:adde4387491a0daf7d9dfe",
-  measurementId: "G-K085YVE279"
-};
+    apiKey: "AIzaSyCPi3bXFQrElpQiI-F9SW02zseaOhPLJyU",
+    authDomain: "bikegps-e1f2f.firebaseapp.com",
+    databaseURL: "https://bikegps-e1f2f-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "bikegps-e1f2f",
+    storageBucket: "bikegps-e1f2f.appspot.com",
+    messagingSenderId: "646124536795",
+    appId: "1:646124536795:web:adde4387491a0daf7d9dfe",
+    measurementId: "G-K085YVE279"
+  };
 
 // fungsi initializeApp dengan objek firebaseConfig bertindak sebagai argumen untuk menginisialisasi Firebase dalam 
 // aplikasi. Hasil inisialisasi disimpan dalam variabel app
@@ -29,8 +28,6 @@ export const firestore = getFirestore(app)
 // Hasil inisialisasi disimpan dalam variabel storage. 
 // Layanan ini berguna ketika kita ingin menyimpan berkas seperti gambar atau dokumen.
 export const storage = getStorage(app)
-
-export const realtime = getDatabase(app)
 
 // initializeAuth: digunakan untuk menginisialisasi layanan Firebase Authentication. 
 // kita juga mengatur opsi persistence ke getReactNativePersistence(ReactNativeAsyncStorage). 

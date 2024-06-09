@@ -72,6 +72,7 @@ const styles = StyleSheet.create({
         padding: 10,
         borderTopStartRadius: 25,
         borderTopEndRadius: 25,
+        zIndex: 9999
     },
     left: {
         position: 'absolute',

@@ -54,6 +54,16 @@ const BarcodeScanner = ({navigation, route}) => {
             const bikeQuery = query(bikeRef, where("bikeID", "==", bikeID))
             const bikeSnapshot = await getDocs(bikeQuery);
             await updateDoc(bikeSnapshot.docs[0].ref, { rented: false })
+            // const bikeSnapshot1 = await get(bikeRef);
+            // const bikeData1 = bikeSnapshot.val();
+            //   // Convert bike locations to an array
+            // const bikeArray = Object.keys(bikeData).map(key => ({
+            //   bikeID: key,
+            //   ...bikeData[key]
+            // }));
+
+            
+
             documentUpdated = true;
 
             const notificationRef = await addDoc(collection(firestore, 'Rental'), {
