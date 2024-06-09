@@ -79,7 +79,8 @@ const BarcodeScanner = ({navigation, route}) => {
             let time = Math.abs(timeEnd - timeStart);
 
             time = Math.floor(time / (1000 * 60))
-            navigation.navigate('Payment', {userId: currentUser, time: time});
+
+            navigation.navigate('Payment', {userId: currentUser, time: time, timeEnd: time});
           }
         });
 
