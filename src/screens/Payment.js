@@ -47,9 +47,55 @@ const Payment = ({navigation, route}) => {
     const [activeCardId, setActiveCardId] = useState(null);
     const [modalVisible, setModalVisible] = useState(false);
 
-    const handleClose = () => {
-        setModalVisible(false);
-      };
+    const handleClose = async () => {
+        try {
+            // Fungsi untuk menambahkan data ke koleksi 'history'
+            async function addHistoryData(location, price, idRent, date, duration, userId) {
+            try {
+                // Tambahkan data ke Firestore
+                const historyRef = await addDoc(collection(firestore, 'history'), {
+                loc: location,
+                price: price,
+                id: idRent,
+                date: date,
+                duration: duration,
+                id_user: userId
+                });
+    
+                console.log('Data berhasil ditambahkan ke koleksi "history" dengan ID:', historyRef.id);
+            } catch (error) {
+                console.error('Gagal menambahkan data:', error);
+                throw error; // Melempar error untuk ditangkap di blok catch luar
+            }
+            }
+    
+            const tgl = new Date(timeEnd);
+            // Ambil tanggal, bulan, dan tahun dari objek Date
+            const day = ('0' + tgl.getDate()).slice(-2); // Mendapatkan hari (DD)
+            const month = ('0' + (tgl.getMonth() + 1)).slice(-2); // Mendapatkan bulan (BB). Perlu ditambah 1 karena bulan dimulai dari 0 (Januari)
+            const year = tgl.getFullYear()
+            // Format date dalam format "DD BB TTTT"
+            const date = `${day} ${month} ${year}`;
+    
+            const tahun = tgl.getFullYear().toString().slice(-2);
+            const idRent = `${day}${month}${tahun}`;
+    
+            const location = 'Pos Sepeda :)'
+            const durasi = (time/60).toFixed(2);
+    
+            const price = 10*time;
+            await addHistoryData(location, price, idRent, date, durasi, userId);
+    
+            console.log('Data history ditambahkan dan modal ditutup');
+            
+            // Tambahkan log atau tindakan lain setelah menutup modal
+            } catch (error) {
+                console.error('Gagal menutup modal:', error);
+                // Tambahan: Mungkin tambahkan penanganan kesalahan sesuai kebutuhan
+            }
+                // Set modal visible ke false
+                setModalVisible(false);
+        };
 
     const handleCardPress = (id) => {
         setActiveCardId(id);
