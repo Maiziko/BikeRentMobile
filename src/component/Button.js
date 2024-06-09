@@ -20,7 +20,7 @@ const Button = ({ children, onPress, backgroundColor }) => {
         },
         width: 297,
         shadowRadius: 2,
-        borderRadius: 8,
+        borderRadius: 50,
     };
 
     return(
@@ -53,6 +53,6 @@ const styles = StyleSheet.create({
         width: 297,
         height: 51,
         top: 0,
-        borderRadius: 8,
+        borderRadius: 50,
     }
 })

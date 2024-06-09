@@ -1,51 +1,70 @@
-import { Alert, FlatList, Pressable, StyleSheet, Text, TouchableOpacity, View, } from 'react-native';
+import { Alert, FlatList, Pressable, StyleSheet, Text, Modal, TouchableOpacity, View, } from 'react-native';
 import { Image } from 'expo-image';
 import { Link } from 'expo-router';
 import React, { useEffect, useState } from 'react';
+import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 
 import Button from '../component/Button';
 import Topbar_2 from '../component/topbar_2';
 
 
-const CardItem = ({ title, account, image, onPress, isActive=false }) => (
-    <TouchableOpacity style={[styles.cardItem, isActive && styles.activeCardItem]} onPress={onPress}>
-        <Image source={{ uri: image }} style={styles.cardImage} />
-        <View style={styles.cardTextContainer}>
-            <Text style={[styles.cardTitle]}>{title}</Text>
-            <Text style={[styles.cardAccount]}>{account}</Text>
-        </View>
-    </TouchableOpacity>
-);
 
-const Payment = () => {
+const Payment = (navigation, route) => {
+    // const { userId } = route.params;
+    
+    const CardItem = ({ title, account, image, onPress, isActive=false }) => (
+        <TouchableOpacity style={[styles.cardItem, isActive && styles.activeCardItem]} onPress={onPress}>
+            <Image source={image} style={styles.cardImage} />
+            <View style={styles.cardTextContainer}>
+                <Text style={[styles.cardTitle]}>{title}</Text>
+                <Text style={[styles.cardAccount]}>{account}</Text>
+            </View>
+        </TouchableOpacity>
+    );
+
     const cards = [
         {
         id: '1',
-        title: 'Mandiri',
-        account: '123456789',
-        image: 'https://via.placeholder.com/150',
+        title: 'BCA',
+        account: '2345 6789 0123 4567',
+        image: require('../../assets/bca.png'),
         },
         {
         id: '2',
-        title: 'Free Shipping',
-        account: '123456789',
-        image: 'https://via.placeholder.com/150',
+        title: 'BRI',
+        account: '1224 5678 9012 3456',
+        image: require('../../assets/bri.png'),
         },
         {
         id: '3',
-        title: 'Buy 1 Get 1 Free',
-        account: '123456789',
-        image: 'https://via.placeholder.com/150',
+        title: 'Mandiri',
+        account: '3456 7890 1234 5678',
+        image: require('../../assets/bri.png'),
         },
     ];
 
     const [activeCardId, setActiveCardId] = useState(null);
+    const [modalVisible, setModalVisible] = useState(false);
+
+    const handleClose = () => {
+        setModalVisible(false);
+      };
+
     const handleCardPress = (id) => {
         setActiveCardId(id);
         let desc = cards.find((card) => card.id === id).account;
         Alert.alert('Card Berhasil Digunakan', desc);
     };
+
+    const handleBayar = () => {
+        if (!activeCardId) {
+            Alert.alert('Pilih Kartu Pembayaran', 'Silahkan pilih kartu pembayaran terlebih dahulu');
+            return;
+        }
+
+        setModalVisible(true);
+    }
 
     return (
         <View style={styles.container}>
@@ -90,22 +109,29 @@ const Payment = () => {
                     <Text style={{color:'#5E5F60', fontWeight:'semibold', fontSize:16, left:5}}>Summary :</Text>
                     <Text style={{color:'#5E5F60', fontWeight:'bold', fontSize:16, position:'absolute', right:5}}>Rp85000</Text>
                 </View>
-                <Button children={'Bayar'}/>
+                <Button children={'Bayar'} onPress={handleBayar}/>
             </View>
             <Modal
                 transparent={true}
-                animationType="slide"
+                animationType='slide'
                 visible={modalVisible}
                 onRequestClose={handleClose}
             >
                 <View style={{backgroundColor: 'rgba(0, 0, 0, 0.5)', padding: 10, width: '100%', height: '100%', marginLeft: 'auto', marginRight: 'auto'}}>
                 <View style={{backgroundColor: 'white', borderRadius: 20, marginTop: 'auto', marginBottom: 'auto'}}>
-                <View style={{padding: 20}}>
-                    <Image source={require('../../assets/GaLang.png')} style={{width: 133, height: 189, marginLeft: 'auto', marginRight: 'auto'}}></Image>
-                    <Image source={require('../../assets/TulisanGaLang.png')} style={{width: 117, height: 27, marginLeft: 'auto', marginRight: 'auto'}}></Image>
-                    <Text style={{color: '#459708', marginLeft: 'auto', marginRight: 'auto', marginTop: 20, fontWeight: 'bold', fontSize: 16}}>Pembayaran Berhasil</Text>
-                    <Text style={{color: '#004268', marginLeft: 'auto', marginRight: 'auto', marginTop: 10, fontWeight: 'bold', fontSize: 14}}>Terima kasih sudah menggunakan BikeRent</Text>
-                    <Pressable onPress={handleClose} style={{marginTop: 20, backgroundColor: '#459708', padding: 15, borderRadius: 10}}><Text style={{textAlign: 'center', color: 'white', fontWeight: 'bold'}}>OK</Text></Pressable>
+                <View style={{padding: 20, justifyContent:'center', alignItems:'center'}}>
+                    <View style={{alignItems: 'center', justifyContent:'center'}}>
+                        <LinearGradient colors={['#EB7802', '#DA421C']} style={{width:100, height:100, borderRadius:50, justifyContent:'center', alignItems:'center'}}>
+                            <Ionicons name='checkmark' size={90} color='#FFFFFF' />
+                        </LinearGradient>
+                    </View>
+                    <Text style={{color: 'rgba(11, 26, 63, 1)', marginLeft: 'auto', marginRight: 'auto', marginTop: 20, fontWeight: 'bold', fontSize: 16}}>Pembayaran Berhasil</Text>
+                    <Text style={{color: 'rgba(11, 26, 63, 1)', marginLeft: 'auto', marginRight: 'auto', marginTop: 10, fontWeight: 'bold', fontSize: 14}}>Terima kasih sudah menggunakan BikeRent</Text>
+                    <LinearGradient colors={['#EB7802', '#DA421C']} style={{marginTop:25, width:'95%', height:50, borderRadius:50, justifyContent:'center', alignItems:'center'}}>
+                        <Pressable onPress={() => {handleClose; navigation.navigate('Home')}} style={{width:100, height:50,  backgroundColor: 'transparent', padding: 5, justifyContent:'center', alignItems:'center', borderRadius: 50}}>
+                            <Text style={{textAlign: 'center', color: '#FFFFFF', fontSize:21, fontWeight: 'bold'}}>OK</Text>
+                        </Pressable>    
+                    </LinearGradient>
                 </View>
                 </View>
                 </View>
@@ -147,7 +173,7 @@ const styles = StyleSheet.create({
         padding: 10,
         borderTopStartRadius: 25,
         borderTopEndRadius: 25,
-        shadowColor: "#000",
+        shadowColor: '#000',
         shadowOpacity: 0.5,
         shadowRadius: 100,
         elevation: 5,

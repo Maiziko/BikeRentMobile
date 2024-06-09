@@ -12,6 +12,7 @@ import Profile from '../screens/Profile';
 import UpdateProfile from '../screens/UpdateProfile';
 import Riwayat from '../screens/Riwayat';
 import Notification from '../screens/Notification';
+import Payment from '../screens/Payment';
 
 const Stack = createStackNavigator()
 
@@ -22,15 +23,16 @@ const Routes = () => {
       <NavigationContainer>
         <Stack.Navigator>
           <Stack.Screen name= 'Signin' component ={Signin} options={{ headerShown: false }}/> 
-            <Stack.Screen name= 'Signup' component ={Signup} options={{ headerShown: false }}/>
-            <Stack.Screen name= 'Home' component ={Home} options={{ headerShown: false }}/>
-            <Stack.Screen name="BarcodeScanner" component={BarcodeScanner} options={{ headerShown: false }}/>
-            <Stack.Screen name= 'MyVoucher' component ={MyVoucher} options={{ headerShown: false }}/>
-            <Stack.Screen name= 'MyCard' component ={MyCard} options={{ headerShown: false }}/>
-            <Stack.Screen name= 'History' component ={Riwayat} options={{ headerShown: false }}/>
-            <Stack.Screen name= 'Profile' component ={Profile} options={{ headerShown: false }}/>
-            <Stack.Screen name= 'UpdateProfile' component ={UpdateProfile} options={{ headerShown: false }}/>
-            <Stack.Screen name= 'Notification' component ={Notification} options={{ headerShown: false }}/>
+          <Stack.Screen name= 'Signup' component ={Signup} options={{ headerShown: false }}/>
+          <Stack.Screen name= 'Home' component ={Home} options={{ headerShown: false }}/>
+          <Stack.Screen name="BarcodeScanner" component={BarcodeScanner} options={{ headerShown: false }}/>
+          <Stack.Screen name= 'MyVoucher' component ={MyVoucher} options={{ headerShown: false }}/>
+          <Stack.Screen name= 'MyCard' component ={MyCard} options={{ headerShown: false }}/>
+          <Stack.Screen name= 'Payment' component ={Payment} options={{ headerShown: false }}/>
+          <Stack.Screen name= 'History' component ={Riwayat} options={{ headerShown: false }}/>
+          <Stack.Screen name= 'Profile' component ={Profile} options={{ headerShown: false }}/>
+          <Stack.Screen name= 'UpdateProfile' component ={UpdateProfile} options={{ headerShown: false }}/>
+          <Stack.Screen name= 'Notification' component ={Notification} options={{ headerShown: false }}/>
         </Stack.Navigator>
       </NavigationContainer>
     </View>
