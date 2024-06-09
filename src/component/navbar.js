@@ -1,42 +1,61 @@
-import { StyleSheet, Text, View } from 'react-native';
-import { Image } from 'expo-image'
-import { Link } from 'expo-router';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useLayoutEffect, useState } from "react";
+import { Image } from 'expo-image';
+import { useNavigation } from '@react-navigation/native';
 
-const Navbar = () => {
-    var route = route;
+
+const Navbar = ({userId}) => {
+    
+    const navigation = useNavigation();
+
+    console.log('user ID in Navbar:', userId);
+
+    const handleHome = () => {
+        navigation.navigate('Home', {userId});
+    }
+
+    const handlePos = () => {
+        navigation.navigate('Pos', {userId});
+    }
+
+    const handleScanner = () => {
+        navigation.navigate('BarcodeScanner', {userId});
+    }
+
+    const handleHistory = () => {
+        navigation.navigate('History', {userId});
+    }
+
+    const handleProfil = () => {
+        navigation.navigate('Profile', {userId});
+    }
 
     return (
         <View style={styles.container}>
             <View style={styles.left}>
-                <Link href='/' style={{ marginTop: 'auto' }}>
-                    <View style={{flex:1, position:'absolute', alignItems:'center', justifyContent:'center'}}>
-                        <Image source={require('../../assets/nav/home-inact.svg')} contentFit='fill' style={{width:20, height:20}}/>
-                        <Text style={{color:'#5E5F60', fontWeight:'semibold'}}>Home</Text>
-                    </View>
-                </Link>
-                <Link href='/' style={{ marginTop: 'auto' }}>
-                <View style={{flex:1, position:'absolute', alignItems:'center', justifyContent:'center'}}>
-                        <Image source={require('../../assets/nav/post-inact.svg')} contentFit='fill' style={{width:20, height:20}}/>
-                        <Text style={{color:'#5E5F60', fontWeight:'semibold'}}>Post</Text>
-                    </View>
-                </Link>
+                <TouchableOpacity onPress={handleHome} style={styles.button}>
+                    <Image source={require('../../assets/nav/home-inact.svg')} contentFit='fill' style={styles.icon}/>
+                    <Text style={styles.text}>Home</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={handlePos} style={styles.button}>
+                    <Image source={require('../../assets/nav/post-inact.svg')} contentFit='fill' style={styles.icon}/>
+                    <Text style={styles.text}>Post</Text>
+                </TouchableOpacity>
             </View>
             <View style={styles.center}>
-                <Image source={require('../../assets/nav/scanqr.svg')} contentFit='fill' style={{width:75, height:75}}/>
+                <TouchableOpacity onPress={handleScanner}>
+                    <Image source={require('../../assets/nav/scanqr.svg')} contentFit='fill' style={styles.scannerIcon}/>
+                </TouchableOpacity>
             </View>
             <View style={styles.right}>
-                <Link href='/' style={{ marginVertical: 'auto' }}>
-                    <View style={{flex:1, position:'absolute', alignItems:'center', justifyContent:'center'}}>
-                        <Image source={require('../../assets/nav/history-inact.svg')} contentFit='fill' style={{width:20, height:20}}/>
-                        <Text style={{color:'#5E5F60', fontWeight:'semibold'}}>History</Text>
-                    </View>
-                </Link>
-                <Link href='/' style={{ marginTop: 'auto' }}>
-                    <View style={{flex:1, position:'absolute', alignItems:'center', justifyContent:'center'}}>
-                        <Image source={require('../../assets/nav/profile-inact.svg')} contentFit='fill' style={{width:20, height:20}}/>
-                        <Text style={{color:'#5E5F60', fontWeight:'semibold'}}>Profile</Text>
-                    </View>
-                </Link>
+                <TouchableOpacity onPress={handleHistory} style={styles.button}>
+                    <Image source={require('../../assets/nav/history-inact.svg')} contentFit='fill' style={styles.icon}/>
+                    <Text style={styles.text}>History</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={handleProfil} style={styles.button}>
+                    <Image source={require('../../assets/nav/profile-inact.svg')} contentFit='fill' style={styles.icon}/>
+                    <Text style={styles.text}>Profile</Text>
+                </TouchableOpacity>
             </View>
         </View>
     )
@@ -47,12 +66,9 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         backgroundColor: '#ffffff',
         alignItems: 'center',
-        justifyContent: 'center',
-        position: 'absolute', // Kalau absolute posisinya kalau di HP yang layarnya punya sudut melengkung jadi ngambang, make relative jadi pas
+        justifyContent: 'space-around',
         width: '100%',
         height: 70,
-        bottom: 10,
-        marginBottom: 5,
         padding: 10,
         borderTopStartRadius: 25,
         borderTopEndRadius: 25,
@@ -78,6 +94,23 @@ const styles = StyleSheet.create({
         paddingHorizontal: 25,
         bottom: 15,
         right: 5,
+    },
+    button: {
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    icon: {
+        width: 20,
+        height: 20,
+        marginBottom: 5,
+    },
+    text: {
+        color: '#5E5F60',
+        fontWeight: 'semibold',
+    },
+    scannerIcon: {
+        width: 75,
+        height: 75,
     }
 });
 

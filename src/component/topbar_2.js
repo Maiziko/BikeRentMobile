@@ -1,20 +1,19 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Image } from 'expo-image'
-import { Link } from 'expo-router';
+import { Image } from 'expo-image';
 import { useFonts } from 'expo-font';
+import { useNavigation } from '@react-navigation/native';
 
 const Topbar_2 = ({tittle}) => {
     var judul = tittle;
+    const navigation = useNavigation();
     return (    
         <View style={{flexDirection:'row', height:100}}>
                 <LinearGradient colors={['#EB7802', '#DA421C']} style={styles.top}/>
                 <View style={{position:'absolute', top:25, left:25}}>
-                    <Link href='/'>
-                        <View>
-                            <Image source={require('../../assets/nav/back.svg')} contentFit='fill' style={{width:55, height:55, borderRadius:30}}/>
-                        </View>
-                    </Link>
+                    <TouchableOpacity onPress={() => navigation.goBack()}>
+                    <Image source={require('../../assets/nav/back.svg')} contentFit='fill' style={{ width: 55, height: 55, borderRadius: 30 }} />
+                    </TouchableOpacity>
                 </View>
                 <View style={{width:'100%', alignItems:'center', justifyContent:'center'}}>
                     <Text style={{color:'#FFFFFF', fontWeight:'bold', fontSize:21, textShadowColor: '#000', textShadowOffset: { width: 2, height: 2 }, textShadowRadius: 3,}}>{judul}</Text>

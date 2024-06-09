@@ -11,6 +11,7 @@ import { useNavigation } from '@react-navigation/native'
 import { Toast } from 'react-native-toast-notifications';
 import { firebaseAuth, firestore } from '../config/firebase'
 import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
+import { Snackbar } from 'react-native-paper'; // Import Snackbar
 
 const Signup = () => {
     let [fontsLoaded] = useFonts({
@@ -26,6 +27,14 @@ const Signup = () => {
         password: { value: '', isValid: true },
     })
 
+    const [snackbarVisible, setSnackbarVisible] = useState(false); // State untuk menampilkan Snackbar
+    const [snackbarMessage, setSnackbarMessage] = useState(''); // Pesan yang akan ditampilkan di Snackbar
+    const [snackVisible, setSnackVisible] = useState(false); // State untuk menampilkan Snackbar
+    const [snackMessage, setSnackMessage] = useState(''); // Pesan yang akan ditampilkan di Snackbar
+
+    const handlesignin = () => {
+        navigation.replace('Signin');
+    }
     const handleRegister = async () => {
 
     // Object dataRegister yang datanya didapatkan dari state inputs
@@ -51,11 +60,8 @@ const Signup = () => {
         console.log(emailIsValid);
         console.log(passwordIsValid);
 
-        Toast.show("Check your input", {
-            duration: 3000,
-            placement: 'bottom',
-            type: 'danger',
-        });
+        setSnackbarMessage('Please, check your input'); // Set pesan untuk Snackbar
+        setSnackbarVisible(true); // Tampilkan Snackbar
         return;
     }
 
@@ -66,11 +72,8 @@ const Signup = () => {
         const userId = success.user.uid;
 
         await sendEmailVerification(firebaseAuth.currentUser)
-        Toast.show("Email verifikasi terkirim", {
-            duration: 3000,
-            placement: 'bottom',
-            type: 'success',
-        });
+        setSnackMessage("Email Verifikasi Terkirim");
+        setSnackVisible(true)
 
         const docRef = {
             userId: userId,
@@ -83,19 +86,13 @@ const Signup = () => {
 
         console.log("Register Success");
 
-        Toast.show("Register success please login", {
-            duration: 3000,
-            placement: 'bottom',
-            type: 'success',
-        });
+        setSnackMessage("Register success please login");
+        setSnackVisible(true)
         navigation.replace('Home')
         } catch (error) {
         const errorMessage = error.message;
-        Toast.show(errorMessage, {
-        duration: 3000,
-        placement: 'bottom',
-        type: 'danger',
-        });
+        setSnackbarMessage(errorMessage); // Set pesan untuk Snackbar
+        setSnackbarVisible(true); // Tampilkan Snackbar
     }
     };
 
@@ -118,7 +115,7 @@ const Signup = () => {
                 <View style={style.buttonSwitch}>
                     <LinearGradient colors={['#EA7604', '#DC4919']} style={style.buttonLinear}/>
                     <View style={{ flex: 1, flexDirection:'row', paddingHorizontal:8 }}>
-                        <Pressable style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                        <Pressable style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }} onPress={handlesignin}>
                             <Text style={{ fontWeight:'bold', color: '#FFFFFF', fontSize: 16}}>Sign In</Text>
                         </Pressable>
                         <Pressable style={{ flex: 1, justifyContent: 'center', alignItems: 'center' , backgroundColor: '#FFFFFF', height: 43, margin: 'auto', borderRadius: 6}}>
@@ -130,9 +127,32 @@ const Signup = () => {
                 <TextInput style={{ width: 297, height: 51, borderWidth: 1, borderRadius: 8, marginHorizontal: 'auto', marginTop: 16 , paddingHorizontal: 20, borderColor: '#C2C2C2'}} placeholder='Enter Fullname' label={"Fullname"} invalid={!inputs.fullname.isValid} onChangeText = {inputChangeHandler.bind(this, 'fullname')}></TextInput>
                 <TextInput style={{ width: 297, height: 51, borderWidth: 1, borderRadius: 8, marginHorizontal: 'auto', paddingHorizontal: 20, marginVertical: 10, borderColor: '#C2C2C2'}} placeholder='Enter Email' label={"Email"} invalid={!inputs.email.isValid} onChangeText= {inputChangeHandler.bind(this, 'email')}></TextInput>
                 <TextInput style={{ width: 297, height: 51, borderWidth: 1, borderRadius: 8, marginHorizontal: 'auto', paddingHorizontal: 20, borderColor: '#C2C2C2'}} placeholder='Enter Password' label={"Password"} invalid={!inputs.password.isValid} onChangeText = {inputChangeHandler.bind(this, 'password')}></TextInput>
-                <Button children={'Sign In'} onPress={handleRegister}/>
+                <Button children={'Sign Up'} onPress={handleRegister}/>
                 <Text style={style.text}>Already have an account ? <Text style={{ fontWeight:'bold' }}>Sign In</Text></Text>
             </View>
+            {/* Snackbar untuk menampilkan pesan error */}
+            <Snackbar
+                visible={snackbarVisible}
+                onDismiss={() => setSnackbarVisible(false)}
+                duration={2000}
+                style={{ marginBottom: "2%", backgroundColor: '#ff0e0e', justifyContent: 'center', borderRadius: 29, marginBottom: '3%'}}
+            >
+                <Text style={{ textAlign: 'center', color: '#fff', fontWeight: 'bold' }}>
+                    {snackbarMessage}
+                </Text>
+            </Snackbar>
+
+            {/* Snackbar untuk menampilkan pesan berhasil */}
+            <Snackbar
+                visible={snackVisible}
+                onDismiss={() => setSnackVisible(false)}
+                duration={2000}
+                style={{ marginBottom: "2%", backgroundColor: 'green', justifyContent: 'center', borderRadius: 29, marginBottom: '3%'}}
+            >
+                <Text style={{ textAlign: 'center', color: '#fff', fontWeight: 'bold' }}>
+                    {snackMessage}
+                </Text>
+            </Snackbar>
         </View>
     );
 };

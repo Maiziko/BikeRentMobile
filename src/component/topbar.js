@@ -1,59 +1,75 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, Alert } from 'react-native';
+import { StyleSheet, Text, View, Alert, TouchableOpacity, Pressable } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Image } from 'expo-image';
 import { Link } from 'expo-router';
-import { firestore } from '../config/firebase'; 
 import { collection, onSnapshot, query, where } from 'firebase/firestore';
+import { doc, getDoc } from 'firebase/firestore';
+import { firebaseAuth, firestore } from '../config/firebase'
+import { destroyKey, getKey } from '../config/localStorage'
+import { useNavigation } from '@react-navigation/native';
 
-const Topbar = () => {
+const Topbar = ({userId}) => {
+    const [dataUsers, setDataUsers] = useState([])
+    const [isLoading, setIsLoading] = useState(false);
     const [hasNotifications, setHasNotifications] = useState(false);
-    const username = 'Udin';
+    const navigation = useNavigation();
 
     useEffect(() => {
-        const rentalCollectionRef = collection(firestore, 'Rental');
-    
-        const unsubscribe = onSnapshot(rentalCollectionRef, () => {
-            setHasNotifications(true); // Set notifications to true whenever changes occur
-        });
-    
-        return () => unsubscribe();
-    }, []);
+        const fetchData = async () => {
+            setIsLoading(true);
+            try {
+                const docRef = doc(firestore, "users", userId);
+                const docSnap = await getDoc(docRef);
+                if (docSnap.exists()) {
+                    setDataUsers(docSnap.data());
+                }
+            } catch (error) {
+                console.error("Error fetching user data:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        fetchData();
+    }, [userId]);
     
 
     const handleNotificationClick = () => {
         // Logic to navigate to the notification page and mark notifications as read
         setHasNotifications(false);
-        Alert.alert('Navigating to notifications page...');
+        // Alert.alert('Navigating to notifications page...');
         // Implement actual navigation logic here
+        console.log('handlenotifclikc', userId)
+        navigation.navigate('Notification', {userId});
     };
 
     return (    
         <View style={styles.container}>
             <LinearGradient colors={['#EB7802', '#DA421C']} style={styles.container}/>
             <View style={styles.left}>
-                <Link href='/'>
+                <TouchableOpacity onPress={() => navigation.navigate('Profile', {userId})}>
                     <View>
-                        <Image source={require('../../assets/functional/dummy-profile.jpeg')} contentFit='fill' style={{width:55, height:55, borderRadius:30}}/>
+                        <Image source={{ uri: dataUsers.imageUri ? dataUsers.imageUri : `https://ui-avatars.com/api/?name=${dataUsers.fullname}` }} contentFit='fill' style={{width:55, height:55, borderRadius:30}}/>
                     </View>
-                </Link>
+                </TouchableOpacity>
+
                 <View style={{paddingLeft:10}}>
-                    <Text style={{color:'#FFFFFF', fontWeight:'bold', fontSize:21}}>Hello, {username}</Text>
-                    <Text style={{color:'#FFFFFF', fontWeight:'semibold', fontSize:15}}>99 Tahun</Text>
+                    <Text style={{color:'#FFFFFF', fontWeight:'bold', fontSize:21}}>Hello, {dataUsers.fullname}</Text>
+                    <Text style={{color:'#FFFFFF', fontWeight:'semibold', fontSize:15}}>{dataUsers.umur} Tahun</Text>
                 </View>
             </View>
             <View style={styles.right}>
-                <Link href='/' onPress={handleNotificationClick}>
+                <TouchableOpacity onPress={handleNotificationClick}>
                     <View style={{flex:1, position:'absolute', alignItems:'center', justifyContent:'center'}}>
                         <Image 
                             source={hasNotifications 
-                                ? require('../../assets/nav/home-inact.svg') 
+                                ? require('../../assets/functional/notification.svg')
                                 : require('../../assets/functional/notification.svg')} 
                             contentFit='fill' 
                             style={{width:39, height:39}}
                         />
                     </View>
-                </Link>
+                </TouchableOpacity>
             </View>
         </View>
     );
@@ -80,7 +96,7 @@ const styles = StyleSheet.create({
     right: {
         position: 'absolute',
         top: 30,
-        right:25,
+        right: 60,
     },
 });
 
