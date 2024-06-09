@@ -73,6 +73,13 @@ const BarcodeScanner = ({navigation, route}) => {
             })
 
             Alert.alert('Rental ended!', `Bike ID: ${bikeID}\nRental ID: ${doc.id}\nRental ended successfully.`);
+            
+            let timeStart = doc.data().rentalStart;
+            let timeEnd = currentTimestamp;
+            let time = Math.abs(timeEnd - timeStart);
+
+            time = Math.floor(time / (1000 * 60))
+            navigation.navigate('Payment', {userId: currentUser, time: time});
           }
         });
 
@@ -104,13 +111,13 @@ const BarcodeScanner = ({navigation, route}) => {
 
 
         Alert.alert('Rental started!', `Bike ID: ${bikeID}\nRental ID: ${rentalDocRef.id}`);
+        navigation.navigate('Home', {userId: currentUser});
       }
     } catch (error) {
       console.error("Error handling barcode scan: ", error);
       Alert.alert('Error', 'There was an error processing your request.');
     }
 
-    navigation.navigate('Home', {userId: currentUser});
   };
 
   if (hasPermission === null) {

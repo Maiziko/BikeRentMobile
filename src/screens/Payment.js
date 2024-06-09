@@ -11,7 +11,7 @@ import Topbar_2 from '../component/topbar_2';
 
 
 const Payment = (navigation, route) => {
-    // const { userId } = route.params;
+    const { userId, time } = route.params;
     
     const CardItem = ({ title, account, image, onPress, isActive=false }) => (
         <TouchableOpacity style={[styles.cardItem, isActive && styles.activeCardItem]} onPress={onPress}>
@@ -98,16 +98,12 @@ const Payment = (navigation, route) => {
             />
             <View style={styles.bottom}>
                 <View style={{flexDirection:'row'}}>
-                    <Text style={{color:'#5E5F60', fontWeight:'semibold', fontSize:14, left:5}}>Diskon :</Text>
-                    <Text style={{color:'#5E5F60', fontWeight:'bold', fontSize:14, position:'absolute', right:5}}>15%</Text>
-                </View>
-                <View style={{flexDirection:'row'}}>
                     <Text style={{color:'#5E5F60', fontWeight:'semibold', fontSize:14, left:5}}>Total Jam :</Text>
-                    <Text style={{color:'#5E5F60', fontWeight:'bold', fontSize:14, position:'absolute', right:5}}>5 Jam</Text>
+                    <Text style={{color:'#5E5F60', fontWeight:'bold', fontSize:14, position:'absolute', right:5}}>{time} menit</Text>
                 </View>
                 <View style={{flexDirection:'row'}}>
                     <Text style={{color:'#5E5F60', fontWeight:'semibold', fontSize:16, left:5}}>Summary :</Text>
-                    <Text style={{color:'#5E5F60', fontWeight:'bold', fontSize:16, position:'absolute', right:5}}>Rp85000</Text>
+                    <Text style={{color:'#5E5F60', fontWeight:'bold', fontSize:16, position:'absolute', right:5}}>Rp{time * 500}</Text>
                 </View>
                 <Button children={'Bayar'} onPress={handleBayar}/>
             </View>
@@ -128,7 +124,7 @@ const Payment = (navigation, route) => {
                     <Text style={{color: 'rgba(11, 26, 63, 1)', marginLeft: 'auto', marginRight: 'auto', marginTop: 20, fontWeight: 'bold', fontSize: 16}}>Pembayaran Berhasil</Text>
                     <Text style={{color: 'rgba(11, 26, 63, 1)', marginLeft: 'auto', marginRight: 'auto', marginTop: 10, fontWeight: 'bold', fontSize: 14}}>Terima kasih sudah menggunakan BikeRent</Text>
                     <LinearGradient colors={['#EB7802', '#DA421C']} style={{marginTop:25, width:'95%', height:50, borderRadius:50, justifyContent:'center', alignItems:'center'}}>
-                        <Pressable onPress={() => {handleClose; navigation.navigate('Home')}} style={{width:100, height:50,  backgroundColor: 'transparent', padding: 5, justifyContent:'center', alignItems:'center', borderRadius: 50}}>
+                        <Pressable onPress={() => {handleClose; navigation.navigate('Home', {userId: userId})}} style={{width:100, height:50,  backgroundColor: 'transparent', padding: 5, justifyContent:'center', alignItems:'center', borderRadius: 50}}>
                             <Text style={{textAlign: 'center', color: '#FFFFFF', fontSize:21, fontWeight: 'bold'}}>OK</Text>
                         </Pressable>    
                     </LinearGradient>
