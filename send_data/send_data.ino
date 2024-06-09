@@ -22,14 +22,14 @@ HardwareSerial SerialPort(2);
 #define WIFI_SSID "Eja"
 #define WIFI_PASSWORD "12345678"
 
-#define API_KEY "AIzaSyCK75dqXrZjXqYVu2ay39jG2Dy93SmS6Y8"
+#define API_KEY "AIzaSyCPi3bXFQrElpQiI-F9SW02zseaOhPLJyU"
 
 // Insert Authorized Email and Corresponding Password
-#define USER_EMAIL "18221013@std.stei.itb.ac.id"
-#define USER_PASSWORD "daftarqwe123@"
+#define USER_EMAIL "fahrezayunanda@gmail.com"
+#define USER_PASSWORD "Daftarqwe123@"
 
 // Insert RTDB URLefine the RTDB URL
-#define DATABASE_URL "https://bikerent-b54ac-default-rtdb.asia-southeast1.firebasedatabase.app/"
+#define DATABASE_URL "https://bikegps-e1f2f-default-rtdb.asia-southeast1.firebasedatabase.app"
 
 // Define Firebase objects
 FirebaseData fbdo;
@@ -42,12 +42,9 @@ String uid;
 // Variable locations
 float lat;
 float lgt;
-// int countMhs;
 
 // Variables to save database paths
 String databasePath;
-// String terPath;
-// String mhsPath;
 String latPath;
 String lgtPath;
 // Timer variables (send new readings every three minutes)
@@ -70,22 +67,6 @@ void initWiFi() {
   Serial.println();
 }
 
-// Write integer values to the database
-// void sendInt(String path, int value){
-//   if (Firebase.RTDB.setInt(&fbdo, path.c_str(), value)){
-//     Serial.print("Writing value: ");
-//     Serial.print (value);
-//     Serial.print(" on the following path: ");
-//     Serial.println(path);
-//     Serial.println("PASSED");
-//     Serial.println("PATH: " + fbdo.dataPath());
-//     Serial.println("TYPE: " + fbdo.dataType());
-//   }
-//   else {
-//     Serial.println("FAILED");
-//     Serial.println("REASON: " + fbdo.errorReason());
-//   }
-// }
 
 // Write integer values to the database
 void sendFloat(String path, float value){
@@ -103,24 +84,6 @@ void sendFloat(String path, float value){
     Serial.println("REASON: " + fbdo.errorReason());
   }
 }
-// Write integer values to the database
-// void sendString(String path, String value){
-//   String temp=" ";
-//   value = value + temp;
-//   if (Firebase.RTDB.setString(&fbdo, path.c_str(), value)){
-//   Serial.print("Writing value: ");
-//   Serial.print (value);
-//   Serial.print(" on the following path: ");
-//   Serial.println(path);
-//   Serial.println("PASSED");
-//   Serial.println("PATH: " + fbdo.dataPath());
-//   Serial.println("TYPE: " + fbdo.dataType());
-//   }
-//   else {
-//     Serial.println("FAILED");
-//     Serial.println("REASON: " + fbdo.errorReason());
-//   }
-// }
 
 void setup() {
   SerialPort.begin(115200, SERIAL_8N1, 18, 19);
@@ -165,37 +128,15 @@ void setup() {
   Serial.println(uid);
 
   // Update database path
-  databasePath = "/LokasiSepeda/" + uid + "/";
+  databasePath = "/Bike/" + "1" + "/";
 
   // Update database path for sensor readings
-  // mhsPath = databasePath + "countMhs";
   latPath = databasePath + "latitude";
   lgtPath = databasePath + "longitude";
-  // terPath = databasePath + "Terminal";
 
-  // Sync Data in Firebase
-  // if(Firebase.RTDB.getInt(&fbdo, mhsPath)){
-  //   countMhs = fbdo.intData();
-  // }
-  // if(Firebase.RTDB.getString(&fbdo, terPath)){
-  //   terminal = fbdo.stringData();
-  //   terminal.trim(); 
-  //   temp = String(countMhs)+","+terminal+".";
-  //   SerialPort.print(temp);
-  // }
 }
 
 void loop() {
-  // Read from the other ESP32 via Serial2
-  // if (SerialPort.available()) {
-  //   Serial.println("get");
-  //   receivedData = SerialPort.readString();
-  //   temp = receivedData.substring(0,receivedData.indexOf(","));
-  //   countMhs = temp.toInt();
-  //   terminal = receivedData.substring(receivedData.indexOf(",")+1,receivedData.indexOf("."));
-  //   Serial.print("Received from ESP32 #2: ");
-  //   Serial.println(receivedData);
-  // }
 
   //Read location
   if (SerialGPS.available()) {
@@ -217,15 +158,9 @@ void loop() {
   }
 
   //Send to database
-  // && (millis() - sendDataPrevMillis > timerDelay || sendDataPrevMillis == 0)
   if (Firebase.ready()){
-    // sendDataPrevMillis = millis();
-
-    // Send readings to database:
-    // sendInt(mhsPath, countMhs);
     sendFloat(latPath, lat);
     sendFloat(lgtPath, lgt);
-    // sendString(terPath, terminal);
   }
   delay(1000);
 }
