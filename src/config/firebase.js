@@ -5,13 +5,14 @@ import { initializeAuth, getReactNativePersistence } from "firebase/auth"
 import ReactNativeAsyncStorage from "@react-native-async-storage/async-storage";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyCK75dqXrZjXqYVu2ay39jG2Dy93SmS6Y8",
-    authDomain: "bikerent-b54ac.firebaseapp.com",
-    projectId: "bikerent-b54ac",
-    storageBucket: "bikerent-b54ac.appspot.com",
-    messagingSenderId: "430696720799",
-    appId: "1:430696720799:web:d31602fa9ec9a6fa5b35aa",
-    measurementId: "G-R2YF7GNTFR"
+  apiKey: "AIzaSyCPi3bXFQrElpQiI-F9SW02zseaOhPLJyU",
+  authDomain: "bikegps-e1f2f.firebaseapp.com",
+  databaseURL: "https://bikegps-e1f2f-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "bikegps-e1f2f",
+  storageBucket: "bikegps-e1f2f.appspot.com",
+  messagingSenderId: "646124536795",
+  appId: "1:646124536795:web:adde4387491a0daf7d9dfe",
+  measurementId: "G-K085YVE279"
 };
 
 // fungsi initializeApp dengan objek firebaseConfig bertindak sebagai argumen untuk menginisialisasi Firebase dalam 
