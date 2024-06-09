@@ -4,7 +4,7 @@ import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import Navbar from '../component/navbar';
 import { useNavigation } from '@react-navigation/native';
-import { collection, query, where, getDocs, deleteDoc } from 'firebase/firestore';
+import { collection, query, where, getDocs, deleteDoc, orderBy } from 'firebase/firestore';
 import { firestore } from '../config/firebase'
 
 const RentalHistoryItem = ({ location, price, date, duration, id, isSelected, onSelect, users }) => (
@@ -14,7 +14,6 @@ const RentalHistoryItem = ({ location, price, date, duration, id, isSelected, on
         <Image source={require('../../assets/nav/loc.svg')} style={styles.icon} />
         <Text style={styles.locText}>{location}</Text>
       </View>
-      <Text style={styles.historyId}>ID: BR-{id}</Text>
       <View style={styles.historyPrice}>
         <Image source={require('../../assets/nav/bill.svg')} style={{width: 18, height: 18, marginRight: 5, contentFit: 'fill'}} />
         <Text style={styles.historyText}>Rp.{price}</Text>
@@ -23,7 +22,7 @@ const RentalHistoryItem = ({ location, price, date, duration, id, isSelected, on
     <View style={styles.historyRight}>
       <View style={styles.historyLocation}>
         <Image source={require('../../assets/clock.svg')} style={{width: 18, height: 18, marginRight: 5, contentFit: 'fill'}} />
-        <Text style={styles.historyDuration}>{duration} Jam</Text>
+        <Text style={styles.historyDuration}>{Math.floor(duration/60)} menit {Math.floor(duration%60)} detik</Text>
       </View>
       <Text style={styles.historyDate}>{date}</Text>
     </View>
@@ -46,7 +45,7 @@ const Riwayat = ({route}) => {
             // Buat referensi ke koleksi 'history'
             const historyRef = collection(firestore, "history");
             // Buat query untuk mengambil dokumen dengan id_user yang sesuai
-            const q = query(historyRef, where('id_user', '==', userId));
+            const q = query(historyRef, where('id_user', '==', userId), orderBy('date', 'desc'));
             // Eksekusi query
             const querySnapshot = await getDocs(q);
             // Ambil data dari setiap dokumen
@@ -152,11 +151,6 @@ const Riwayat = ({route}) => {
           <Text style={{color:'#FFFFFF', fontWeight:'bold', fontSize:21, textShadowColor: '#000', textShadowOffset: { width: 2, height: 2 }, textShadowRadius: 3,}}>RIWAYAT</Text>
         </View>
 
-        <View style={{ position: 'absolute', top: 25, right: 25 }}>
-            <TouchableOpacity onPress={deleting ? handleShowmodal : toggleSelectionMode}>
-                <Image source={require('../../assets/nav/dustbin.svg')} contentFit='fill' style={{ width: 55, height: 55, borderRadius: 30 }} />
-            </TouchableOpacity>
-        </View>
 
 
       </View>
@@ -172,9 +166,8 @@ const Riwayat = ({route}) => {
             <RentalHistoryItem
               location={item.location}
               price={item.price}
-              date={item.date}
+              date={new Date(item.date.seconds * 1000).toLocaleString()}
               duration={item.duration}
-              id={item.idRent}
               isSelected={selectedItems.includes(item.idRent)}
               onSelect={handleSelectItem}
             />

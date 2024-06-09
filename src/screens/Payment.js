@@ -4,6 +4,8 @@ import { Link } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import { firestore } from '../config/firebase';
+import { collection, addDoc, query, where, getDocs, updateDoc, Timestamp } from 'firebase/firestore';
 
 import Button from '../component/Button';
 import Topbar_2 from '../component/topbar_2';
@@ -50,13 +52,12 @@ const Payment = ({navigation, route}) => {
     const handleClose = async () => {
         try {
             // Fungsi untuk menambahkan data ke koleksi 'history'
-            async function addHistoryData(location, price, idRent, date, duration, userId) {
+            async function addHistoryData(location, price, date, duration, userId) {
             try {
                 // Tambahkan data ke Firestore
                 const historyRef = await addDoc(collection(firestore, 'history'), {
                 loc: location,
                 price: price,
-                id: idRent,
                 date: date,
                 duration: duration,
                 id_user: userId
@@ -69,22 +70,13 @@ const Payment = ({navigation, route}) => {
             }
             }
     
-            const tgl = new Date(timeEnd);
-            // Ambil tanggal, bulan, dan tahun dari objek Date
-            const day = ('0' + tgl.getDate()).slice(-2); // Mendapatkan hari (DD)
-            const month = ('0' + (tgl.getMonth() + 1)).slice(-2); // Mendapatkan bulan (BB). Perlu ditambah 1 karena bulan dimulai dari 0 (Januari)
-            const year = tgl.getFullYear()
-            // Format date dalam format "DD BB TTTT"
-            const date = `${day} ${month} ${year}`;
+            const date = timeEnd;
     
-            const tahun = tgl.getFullYear().toString().slice(-2);
-            const idRent = `${day}${month}${tahun}`;
-    
-            const location = 'Pos Sepeda :)'
-            const durasi = (time/60).toFixed(2);
+            const location = 'GKU 1'
+            const durasi = time
     
             const price = 10*time;
-            await addHistoryData(location, price, idRent, date, durasi, userId);
+            await addHistoryData(location, price, date, durasi, userId);
     
             console.log('Data history ditambahkan dan modal ditutup');
             
@@ -172,7 +164,7 @@ const Payment = ({navigation, route}) => {
                     <Text style={{color: 'rgba(11, 26, 63, 1)', marginLeft: 'auto', marginRight: 'auto', marginTop: 20, fontWeight: 'bold', fontSize: 16}}>Pembayaran Berhasil</Text>
                     <Text style={{color: 'rgba(11, 26, 63, 1)', marginLeft: 'auto', marginRight: 'auto', marginTop: 10, fontWeight: 'bold', fontSize: 14}}>Terima kasih sudah menggunakan BikeRent</Text>
                     <LinearGradient colors={['#EB7802', '#DA421C']} style={{marginTop:25, width:'95%', height:50, borderRadius:50, justifyContent:'center', alignItems:'center'}}>
-                        <Pressable onPress={() => {handleClose; navigation.navigate('Home', {userId: userId})}} style={{width:100, height:50,  backgroundColor: 'transparent', padding: 5, justifyContent:'center', alignItems:'center', borderRadius: 50}}>
+                        <Pressable onPress={() => {handleClose(); navigation.navigate('Home', {userId: userId})}} style={{width:300, height:50,  backgroundColor: 'transparent', padding: 5, justifyContent:'center', alignItems:'center', borderRadius: 50}}>
                             <Text style={{textAlign: 'center', color: '#FFFFFF', fontSize:21, fontWeight: 'bold'}}>OK</Text>
                         </Pressable>    
                     </LinearGradient>
