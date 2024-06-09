@@ -67,9 +67,6 @@ useEffect(() => {
     };
     fetchPos();
     // Cleanup listener on unmount
-    return () => {
-      posRef.off();
-    };
   }, []);
 
 
@@ -90,14 +87,23 @@ useEffect(() => {
         longitudeDelta: 0.0421,
       });
       setUserLocation({ latitude, longitude });
+
+      if (userId == '4BscOBgMJBWOTWsAZbAtdf767Im1') {
+        const bikeLocation = { latitude: latitude, longitude: longitude }
+
+        const posRef = ref(realtime, `Bike/1`);
+        await update(posRef, { latitude: bikeLocation.latitude, longitude: bikeLocation.longitude });
+      }
     };
 
-    getLocation();
-
-    const intervalId = setInterval(getLocation, 3000);
+    
+    const intervalId = setInterval(() => {
+      getLocation();
+      console.log(userId, 'lokasi:', userLocation)
+    }, 3000);
 
     return () => clearInterval(intervalId);
-  }, []);
+  }, [userLocation]);
 
   // useEffect(() => {
   //   getBikeLocation()
@@ -188,9 +194,6 @@ useEffect(() => {
     getBikeLocation();
 
     // Cleanup listener on unmount
-    return () => {
-        bikeRef.off();
-    };
 }, []);
 
 
@@ -254,7 +257,7 @@ const updateNumberOfBikeInPos = async () => {
 
   for (const pos of posArray) {
     const posLocation = { latitude: pos.latitude, longitude: pos.longitude };
-    const radius = 2; // 2 meter radius
+    const radius = 10; // 2 meter radius
     let nBike = 0;
 
     for (const bike of bikeArray) {
@@ -313,14 +316,15 @@ const updateNumberOfBikeInPos = async () => {
       <MapView style={styles.map} initialRegion={initialRegion}>
         {initialRegion && (
           <Marker
-            coordinate={{latitude: initialRegion.latitude, longitude: initialRegion.longitude}}
+            coordinate={{latitude: -6.929763, longitude: 107.769115}}
             title="Your Location"
             description="You are here!"
+            pinColor="blue"
           />
         )}
         {userLocation && (
           <Marker
-            coordinate={{latitude: userLocation.latitude, longitude: userLocation.longitude}}
+            coordinate={{latitude: -6.929763, longitude: 107.769115}}
             title="User Location"
             description="User is here!"
             pinColor="blue"

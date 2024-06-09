@@ -10,6 +10,7 @@ const BarcodeScanner = ({navigation, route}) => {
   const [scanned, setScanned] = useState(false);
   const [scannedData, setScannedData] = useState(null);
   const [cameraActive, setCameraActive] = useState(true);
+  const {userId} = route.params;
   const currentUser = route.params.userId
 
   useEffect(() => {
@@ -66,8 +67,8 @@ const BarcodeScanner = ({navigation, route}) => {
 
             documentUpdated = true;
 
-            const notificationRef = await addDoc(collection(firestore, 'Rental'), {
-              message: "You have ended rental on bike " + {bikeID},
+            const notificationRef = await addDoc(collection(firestore, 'notifikasi'), {
+              message: "You have ended rental on bike " + bikeID,
               timeStamp: currentTimestamp,
               userId: userID
             })
@@ -78,8 +79,8 @@ const BarcodeScanner = ({navigation, route}) => {
             let timeEnd = currentTimestamp;
             let time = Math.abs(timeEnd - timeStart);
 
-            time = Math.floor(time / (1000 * 60))
-            navigation.navigate('Payment', {userId: currentUser, time: time});
+            time = Math.floor(time);
+            navigation.navigate('Payment', {userId: userID, time: time, timeEnd: timeEnd});
           }
         });
 
@@ -102,8 +103,8 @@ const BarcodeScanner = ({navigation, route}) => {
         const bikeSnapshot = await getDocs(bikeQuery);
         await updateDoc(bikeSnapshot.docs[0].ref, { rented: true })
 
-        const notificationRef = await addDoc(collection(firestore, 'Rental'), {
-          message: "You have started rental on bike " + {bikeID},
+        const notificationRef = await addDoc(collection(firestore, 'notifikasi'), {
+          message: "You have started rental on bike " + bikeID,
           timeStamp: currentTimestamp,
           userId: userID
         })

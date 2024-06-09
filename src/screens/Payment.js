@@ -10,8 +10,8 @@ import Topbar_2 from '../component/topbar_2';
 
 
 
-const Payment = (navigation, route) => {
-    const { userId, time } = route.params;
+const Payment = ({navigation, route}) => {
+    const { userId, time, timeEnd } = route.params;
     
     const CardItem = ({ title, account, image, onPress, isActive=false }) => (
         <TouchableOpacity style={[styles.cardItem, isActive && styles.activeCardItem]} onPress={onPress}>
@@ -40,16 +40,61 @@ const Payment = (navigation, route) => {
         id: '3',
         title: 'Mandiri',
         account: '3456 7890 1234 5678',
-        image: require('../../assets/bri.png'),
+        image: require('../../assets/mandiri.png'),
         },
     ];
 
     const [activeCardId, setActiveCardId] = useState(null);
     const [modalVisible, setModalVisible] = useState(false);
 
-    const handleClose = () => {
+    const handleClose = async () => {
+        try {
+            // Fungsi untuk menambahkan data ke koleksi 'history'
+            async function addHistoryData(location, price, idRent, date, duration, userId) {
+            try {
+                // Tambahkan data ke Firestore
+                const historyRef = await addDoc(collection(firestore, 'history'), {
+                loc: location,
+                price: price,
+                id: idRent,
+                date: date,
+                duration: duration,
+                id_user: userId
+                });
+            
+                console.log('Data berhasil ditambahkan ke koleksi "history" dengan ID:', historyRef.id);
+            } catch (error) {
+                console.error('Gagal menambahkan data:', error);
+                throw error; // Melempar error untuk ditangkap di blok catch luar
+            }
+            }
+    
+            const tgl = new Date(timeEnd);
+            // Ambil tanggal, bulan, dan tahun dari objek Date
+            const day = ('0' + tgl.getDate()).slice(-2); // Mendapatkan hari (DD)
+            const month = ('0' + (tgl.getMonth() + 1)).slice(-2); // Mendapatkan bulan (BB). Perlu ditambah 1 karena bulan dimulai dari 0 (Januari)
+            const year = tgl.getFullYear()
+            // Format date dalam format "DD BB TTTT"
+            const date = `${day} ${month} ${year}`;
+    
+            const tahun = tgl.getFullYear().toString().slice(-2);
+            const idRent = `${day}${month}${tahun}`;
+    
+            const location = 'Pos Sepeda :)'
+            const durasi = (time/60).toFixed(2);
+    
+            const price = 500*time;
+            await addHistoryData(location, price, idRent, date, durasi, userId);
+            
+            
+            // Tambahkan log atau tindakan lain setelah menutup modal
+            console.log('Data history ditambahkan dan modal ditutup');
+        } catch (error) {
+            console.error('Gagal menutup modal:', error);
+            // Tambahan: Mungkin tambahkan penanganan kesalahan sesuai kebutuhan
+        }
         setModalVisible(false);
-      };
+    };
 
     const handleCardPress = (id) => {
         setActiveCardId(id);
@@ -99,11 +144,11 @@ const Payment = (navigation, route) => {
             <View style={styles.bottom}>
                 <View style={{flexDirection:'row'}}>
                     <Text style={{color:'#5E5F60', fontWeight:'semibold', fontSize:14, left:5}}>Total Jam :</Text>
-                    <Text style={{color:'#5E5F60', fontWeight:'bold', fontSize:14, position:'absolute', right:5}}>{time} menit</Text>
+                    <Text style={{color:'#5E5F60', fontWeight:'bold', fontSize:14, position:'absolute', right:5}}>{Math.floor(time/60)} menit {Math.floor(time%60)} detik</Text>
                 </View>
                 <View style={{flexDirection:'row'}}>
                     <Text style={{color:'#5E5F60', fontWeight:'semibold', fontSize:16, left:5}}>Summary :</Text>
-                    <Text style={{color:'#5E5F60', fontWeight:'bold', fontSize:16, position:'absolute', right:5}}>Rp{time * 500}</Text>
+                    <Text style={{color:'#5E5F60', fontWeight:'bold', fontSize:16, position:'absolute', right:5}}>Rp{time * 10}</Text>
                 </View>
                 <Button children={'Bayar'} onPress={handleBayar}/>
             </View>
