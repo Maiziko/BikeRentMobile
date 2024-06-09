@@ -15,45 +15,55 @@ const Notification = ({navigation, route}) => {
         const notificationRef = collection(firestore, "notifikasi");
         const notificationQuery = query(notificationRef, where("userId", "==", userId))
         const notificationSnapshot = await getDocs(notificationQuery)
+
+        const notificationData = []
+
+        notificationSnapshot.forEach((notif) => {
+            notificationData.push(notif);
+        })
+
+        notificationData.sort((a,b) => b.timestamp-a.timestamp)
+
+        setNotification(notificationData);
         // console.log('notification', notificationSnapshot);
-        const dummyNotifications = [
-            {
-                message: "You have ended rental on bike 1",
-                timestamp: new Date('2024-06-08T10:00:00'),
-                userID: 123
-            },
-            {
-                message: "You have ended rental on bike 2",
-                timestamp: new Date('2024-06-08T09:30:00'),
-                userID: 124
-            },
-            {
-                message: "You have started rental on bike 1",
-                timestamp: new Date('2024-06-08T09:00:00'),
-                userID: 123
-            },
-            {
-                message: "You have started rental on bike 2",
-                timestamp: new Date('2024-06-08T08:00:00'),
-                userID: 124
-            },
-            {
-                message: "You have started rental on bike 1",
-                timestamp: new Date('2024-06-08T07:00:00'),
-                userID: 123
-            },
-            {
-                message: "You have started rental on bike 2",
-                timestamp: new Date('2024-06-08T06:00:00'),
-                userID: 124
-            }
-        ];
+        // const dummyNotifications = [
+        //     {
+        //         message: "You have ended rental on bike 1",
+        //         timestamp: new Date('2024-06-08T10:00:00'),
+        //         userID: 123
+        //     },
+        //     {
+        //         message: "You have ended rental on bike 2",
+        //         timestamp: new Date('2024-06-08T09:30:00'),
+        //         userID: 124
+        //     },
+        //     {
+        //         message: "You have started rental on bike 1",
+        //         timestamp: new Date('2024-06-08T09:00:00'),
+        //         userID: 123
+        //     },
+        //     {
+        //         message: "You have started rental on bike 2",
+        //         timestamp: new Date('2024-06-08T08:00:00'),
+        //         userID: 124
+        //     },
+        //     {
+        //         message: "You have started rental on bike 1",
+        //         timestamp: new Date('2024-06-08T07:00:00'),
+        //         userID: 123
+        //     },
+        //     {
+        //         message: "You have started rental on bike 2",
+        //         timestamp: new Date('2024-06-08T06:00:00'),
+        //         userID: 124
+        //     }
+        // ];
     
-        // Sort notifications in descending order based on timestamp
-        dummyNotifications.sort((a, b) => b.timestamp - a.timestamp);
+        // // Sort notifications in descending order based on timestamp
+        // dummyNotifications.sort((a, b) => b.timestamp - a.timestamp);
     
-        // Set the notification state
-        setNotification(dummyNotifications);
+        // // Set the notification state
+        // setNotification(dummyNotifications);
     }
     useEffect(() => {
         setLoading(true)
