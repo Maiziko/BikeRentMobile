@@ -149,8 +149,8 @@ const styles = StyleSheet.create({
         backgroundColor: '#FFD4A8',
     },
     voucherImage: {
-        width: 50,
-        height: 50,
+        width: 70,
+        height: 70,
         borderRadius: 25,
         marginRight: 15,
     },
