@@ -19,10 +19,11 @@ const Notification = ({navigation, route}) => {
         const notificationData = []
 
         notificationSnapshot.forEach((notif) => {
-            notificationData.push(notif);
+            const notifData = notif.data()
+            notificationData.push(notifData);
         })
 
-        notificationData.sort((a,b) => b.timestamp-a.timestamp)
+        notificationData.sort((a,b) => b.timeStamp-a.timeStamp)
 
         setNotification(notificationData);
         // console.log('notification', notificationSnapshot);
@@ -81,7 +82,7 @@ const Notification = ({navigation, route}) => {
             {notification && notification.map((notif, index) => (
                 <View key={index} style={{backgroundColor: '#FFD4A8', position: 'relative', marginLeft: 10, marginRight: 10, marginTop: 10, height: 80, borderRadius: 15}}>
                     <Text style={{color: '#0B1A3F', fontSize: 15, fontWeight: 500, marginTop: 5, marginLeft: 10}}>{notif.message}</Text>
-                    <Text style={{fontSize: 10, fontWeight: 400, color: '#707B81', position: 'absolute', bottom: 5, right: 10}}>{notif.timestamp.toString()}</Text>
+                    <Text style={{fontSize: 10, fontWeight: 400, color: '#707B81', position: 'absolute', bottom: 5, right: 10}}>{notif.timeStamp.toString()}</Text>
                 </View> 
             ))}
         </View>
