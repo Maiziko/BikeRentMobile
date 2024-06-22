@@ -102,7 +102,6 @@ const Payment = ({navigation, route}) => {
         let desc = cards.find((card) => card.id === id).account;
         Alert.alert('Card Berhasil Digunakan', desc);
     };
-
     
 
     const handleBayar = () => {
